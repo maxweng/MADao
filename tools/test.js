@@ -2,10 +2,59 @@ module.exports = function (callback) {
     var accounts = web3.eth.accounts;
     var mdc = MDC.deployed();
     
-    function showBalances() {
+    var transInt = function(value){return +value};
+    var transUtf8 = function(value){return web3.toUtf8(value)};
+    var transString = function(value){return "" + value};
+    var transEther = function(value){return +web3.fromWei(value, "ether")};
+    
+    function showBalances(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
         console.log("MDC Balance: ", web3.fromWei(+web3.eth.getBalance(mdc.address), "ether"));
         console.log("Account #0 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[0]), "ether"));
         console.log("Account #1 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[1]), "ether"));
+        cb();
+    }
+
+    function getVariable(variableName, cb) {
+        mdc[variableName].call().then(function (value) {
+            cb(value);
+        }).catch(function(err){
+            console.log(err);
+            process.exit();
+        });
+    }
+    
+    function getInfo(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        var info = {};
+        var variables = [
+            ["organizer", transString],
+            ["maxOperatingCharge", transEther],
+            ["recommendationRewardRate", transInt],
+            ["operatingChargeRate", transInt],
+            ["claimFee", transInt],
+            ["status", transInt],
+            ["totalBalances", transEther],
+            ["operatingChargeBalance", transEther],
+            ["totalUserAddresses", transInt],
+            ["totalClaims", transInt],
+        ];
+        work = function(i, work_cb){
+            if(i >= variables.length){
+                return work_cb();
+            }
+            var veriableName = variables[i][0];
+            var transFunc = variables[i][1];
+            getVariable(veriableName, function(value){
+                info[veriableName] = transFunc(value);
+                i++;
+                work(i, work_cb);
+            });
+        }
+        work(0, function(){
+            console.log(info);
+            cb();
+        });
     }
     
     function testChangeSettings(cb) {
@@ -32,8 +81,10 @@ module.exports = function (callback) {
     
     showBalances();
     testChangeSettings(function(){
-        testSignUp(function(){
-            showBalances();
+        getInfo(function(){
+            testSignUp(function(){
+                showBalances();
+            });
         });
     });
 }

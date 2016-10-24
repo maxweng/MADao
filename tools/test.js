@@ -92,8 +92,48 @@ module.exports = function (callback) {
                 });
             }
             work(1, function(){
-                console.log("MDC user info: ", userInfos);
+                console.log("MDC user infos: ", userInfos);
                 cb(userInfos);
+            });
+        });
+    }
+    
+    function getClaims(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        claims = [];
+        getVariable("totalClaims", function(totalClaims){
+            totalClaims = +totalClaims;
+            var work = function(i, work_cb){
+                if(i > totalClaims){
+                    return work_cb();
+                }
+                mdc.getClaim.call(i).then(function (res) {
+                    claims.push({
+                        "_id": i,
+                        "claimer": transString(res[0]),
+                        "reason": transUtf8(res[1]),
+                        "status": transInt(res[2]),
+                        "userInfo": {
+                            "name": transUtf8(res[3]),
+                            "country": transUtf8(res[4]),
+                            "id": transUtf8(res[5]),
+                            "birthdate": transInt(res[6]),
+                            "phone": transUtf8(res[7]),
+                            "email": transUtf8(res[8]),
+                            "timestamp": transInt(res[9]),
+                            "noncestr": transUtf8(res[10])
+                        }
+                    });
+                    i++;
+                    work(i, work_cb);
+                }).catch(function(err){
+                    console.log(err);
+                    process.exit();
+                });
+            }
+            work(1, function(){
+                console.log("MDC claims: ", claims);
+                cb(claims);
             });
         });
     }
@@ -102,16 +142,19 @@ module.exports = function (callback) {
         if(typeof(cb) === "undefined") cb = function(){};
         getInfo(function(info){
             getUserInfos(function(userInfos){
-                cb({
-                    "info": info,
-                    "userInfos": userInfos
+                getClaims(function(claims){
+                    cb({
+                        "info": info,
+                        "userInfos": userInfos,
+                        "claims": claims
+                    });
                 });
             });
         });
     }
     
     function testChangeSettings(cb) {
-        mdc.changeSettings(10, 5, 20, { from: accounts[0] }).then(function (transactionId) {
+        mdc.changeSettings(10, 15, 20, { from: accounts[0] }).then(function (transactionId) {
             console.log('Change settings transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -123,8 +166,18 @@ module.exports = function (callback) {
     function testSignUp(cb) {
         console.log("Claimer Address: ", accounts[0]);
         console.log("Recommender Address: ", accounts[1]);
-        mdc.signUp("test123", accounts[1], { from: accounts[0], value: web3.toWei(50, "ether") }).then(function (transactionId) {
+        mdc.signUp("_test123", accounts[1], { from: accounts[0], value: web3.toWei(100, "ether") }).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
+            cb();
+        }).catch(function(err){
+            console.log(err);
+            process.exit();
+        });
+    }
+    
+    function testClaim(cb) {
+        mdc.claim("_test name", "_test country", "_310110198501081234", 1477306442735, "_13521234567", "_test@test.test", 1477306474088, "_a1seb25f5q", "_I Need Money", { from: accounts[0] }).then(function (transactionId) {
+            console.log('Claim transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
             console.log(err);
@@ -137,6 +190,11 @@ module.exports = function (callback) {
         getTotalInfo(function(){
             testSignUp(function(){
                 showBalances();
+                testClaim(function(){
+                    getTotalInfo(function(){
+                        
+                    });
+                });
             });
         });
     });

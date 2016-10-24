@@ -44,7 +44,7 @@ contract MDC {
 	function MDC(uint _maxOperatingCharge) {
         organizer = msg.sender;
         if(_maxOperatingCharge == 0){
-            maxOperatingCharge = 1000 ether;
+            maxOperatingCharge = 10 ether;
         }else{
             maxOperatingCharge = _maxOperatingCharge;
         }

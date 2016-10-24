@@ -35,7 +35,6 @@ contract MDC {
     
     uint8 public recommendation_reward_rate;
     uint8 public operating_charge_rate;
-    uint public min_claim_fee;
     uint public claim_fee;
 
     uint8 public status; // 0: no claim, 2: has claim
@@ -51,12 +50,10 @@ contract MDC {
         }
 	}
 	
-	function changeSettings(uint8 _recommendation_reward_rate, uint8 _operating_charge_rate, uint _min_claim_fee, uint _claim_fee) organizerRequired{
+	function changeSettings(uint8 _recommendation_reward_rate, uint8 _operating_charge_rate, uint _claim_fee) organizerRequired{
     	if(_recommendation_reward_rate > 100 || _operating_charge_rate > 100 || _recommendation_reward_rate + _operating_charge_rate > 100) throw;
-    	if(_claim_fee < _min_claim_fee) throw;
     	recommendation_reward_rate = _recommendation_reward_rate;
     	operating_charge_rate = _operating_charge_rate;
-    	min_claim_fee = _min_claim_fee;
     	claim_fee = _claim_fee;
 	}
 
@@ -82,7 +79,9 @@ contract MDC {
         	if(infoHashes[msg.sender] != _infoHash) throw;
     	}
     	
-    	if(!recommender.send(recommender_fee)) throw;
+    	if(recommender != address(0) && recommender_fee > 0){
+        	if(!recommender.send(recommender_fee)) throw;
+        }
     	
     	balances[msg.sender] += user_fee;
     	balances[recommender] += recommender_fee;
@@ -92,7 +91,7 @@ contract MDC {
 	
 	function claim(bytes32 _name, bytes32 _country, bytes32 _id, uint _birthdate, bytes32 _phone, bytes32 _email, uint _timestamp, bytes32 _noncestr, bytes32 _reason) {
     	if(operating_charge_balance < max_operating_charge) throw;
-    	if(balances[msg.sender] < min_claim_fee) throw;
+    	if(balances[msg.sender] < claim_fee) throw;
     	if(status != 0) throw;
     	
         totalClaims++;
@@ -138,7 +137,7 @@ contract MDC {
         uint compensation = 0;
         for(uint i=1; i<=totalUserAddresses; i++){
             uint userBalance = balances[userAddresses[totalUserAddresses]];
-            if(userBalance >= min_claim_fee){
+            if(userBalance >= claim_fee){
                 uint userCompensation = userBalance * compensation_rate / 100;
                 if(userCompensation > 0 && userCompensation <= userBalance){
                     balances[userAddresses[totalUserAddresses]] -= userCompensation;

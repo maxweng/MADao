@@ -39,7 +39,7 @@ module.exports = function (callback) {
             ["totalUserAddresses", transInt],
             ["totalClaims", transInt],
         ];
-        work = function(i, work_cb){
+        var work = function(i, work_cb){
             if(i >= variables.length){
                 return work_cb();
             }
@@ -52,8 +52,61 @@ module.exports = function (callback) {
             });
         }
         work(0, function(){
-            console.log(info);
-            cb();
+            console.log("MDC info: ", info);
+            cb(info);
+        });
+    }
+    
+    function getUserInfos(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        userInfos = {};
+        getVariable("totalUserAddresses", function(totalUserAddresses){
+            totalUserAddresses = +totalUserAddresses;
+            var work = function(i, work_cb){
+                if(i > totalUserAddresses){
+                    return work_cb();
+                }
+                mdc.userAddresses.call(i).then(function (userAddress) {
+                    userAddress = "" + userAddress;
+                    mdc.balances.call(userAddress).then(function (balance) {
+                        balance = transEther(balance);
+                        mdc.infoHashes.call(userAddress).then(function (infoHash) {
+                            infoHash = transUtf8(infoHash);
+                            userInfos[userAddress] = {
+                                "balance": balance,
+                                "infoHash": infoHash
+                            }
+                            i++;
+                            work(i, work_cb);
+                        }).catch(function(err){
+                            console.log(err);
+                            process.exit();
+                        });
+                    }).catch(function(err){
+                        console.log(err);
+                        process.exit();
+                    });
+                }).catch(function(err){
+                    console.log(err);
+                    process.exit();
+                });
+            }
+            work(1, function(){
+                console.log("MDC user info: ", userInfos);
+                cb(userInfos);
+            });
+        });
+    }
+    
+    function getTotalInfo(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        getInfo(function(info){
+            getUserInfos(function(userInfos){
+                cb({
+                    "info": info,
+                    "userInfos": userInfos
+                });
+            });
         });
     }
     
@@ -81,7 +134,7 @@ module.exports = function (callback) {
     
     showBalances();
     testChangeSettings(function(){
-        getInfo(function(){
+        getTotalInfo(function(){
             testSignUp(function(){
                 showBalances();
             });

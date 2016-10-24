@@ -185,14 +185,44 @@ module.exports = function (callback) {
         });
     }
     
+    function testInvestigateClaim(claimId, cb) {
+        mdc.investigateClaim(claimId, web3.toWei(1, "ether"), { from: accounts[0] }).then(function (transactionId) {
+            console.log('Investigate Claim transaction ID: ', '' + transactionId);
+            cb();
+        }).catch(function(err){
+            console.log(err);
+            process.exit();
+        });
+    }
+
+    function testPassClaim(claimId, cb) {
+        mdc.passClaim(claimId, 10, web3.toWei(100, "ether"), { from: accounts[0] }).then(function (transactionId) {
+            console.log('Pass Claim transaction ID: ', '' + transactionId);
+            cb();
+        }).catch(function(err){
+            console.log(err);
+            process.exit();
+        });
+    }
+    
     showBalances();
     testChangeSettings(function(){
-        getTotalInfo(function(){
+        getTotalInfo(function(totalInfo){
             testSignUp(function(){
                 showBalances();
                 testClaim(function(){
-                    getTotalInfo(function(){
-                        
+                    getTotalInfo(function(totalInfo){
+                        testInvestigateClaim(totalInfo.info.totalClaims, function(){
+                            showBalances();
+                            getTotalInfo(function(totalInfo){
+                                testPassClaim(totalInfo.info.totalClaims, function(){
+                                    showBalances();
+                                    getTotalInfo(function(totalInfo){
+                                        process.exit();
+                                    });
+                                });
+                            });
+                        });
                     });
                 });
             });

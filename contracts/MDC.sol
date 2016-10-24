@@ -18,6 +18,8 @@ contract MDC {
     }
 
     mapping (address => uint) public balances;
+    uint public totalBalances;
+
     mapping (address => bytes32) public infoHashes;
     
     mapping (uint => address) public userAddresses;
@@ -28,7 +30,6 @@ contract MDC {
     
     uint public operatingChargeBalance;
 
-    uint public totalBalances;
     address public organizer;
     
     uint public maxOperatingCharge;
@@ -86,7 +87,7 @@ contract MDC {
     	balances[msg.sender] += user_fee;
     	balances[recommender] += recommender_fee;
     	operatingChargeBalance += operating_charge_fee;
-    	totalBalances += user_fee + operating_charge_fee;
+    	totalBalances += user_fee;
 	}
 	
 	function claim(bytes32 _name, bytes32 _country, bytes32 _id, uint _birthdate, bytes32 _phone, bytes32 _email, uint _timestamp, bytes32 _noncestr, bytes32 _reason) {
@@ -136,15 +137,14 @@ contract MDC {
     	ClaimInfo claim = claims[claimID];
     	if(claim.status != 0) throw;
     	
-    	if(operatingChargeBalance < _needMaxOperatingCharge || totalBalances < _needMaxOperatingCharge) throw;
+    	if(operatingChargeBalance < _needMaxOperatingCharge) throw;
     	if(!organizer.send(_needMaxOperatingCharge)) throw;
     	operatingChargeBalance -= _needMaxOperatingCharge;
-    	totalBalances -= _needMaxOperatingCharge;
     	
     	claim.status = 2;
 	}
 	
-	function passClaim(uint claimID, uint8 compensationRate, uint8 max_compensation) organizerRequired {
+	function passClaim(uint claimID, uint8 compensationRate, uint max_compensation) organizerRequired {
     	ClaimInfo claim = claims[claimID];
     	if(claim.status != 2) throw;
         if(totalBalances * compensationRate / 100 > max_compensation) throw;

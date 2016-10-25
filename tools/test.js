@@ -60,7 +60,7 @@ module.exports = function (callback) {
     
     function getUserInfos(cb) {
         if(typeof(cb) === "undefined") cb = function(){};
-        userInfos = {};
+        userInfos = [];
         getVariable("totalUserAddresses", function(totalUserAddresses){
             totalUserAddresses = +totalUserAddresses;
             var work = function(i, work_cb){
@@ -73,10 +73,12 @@ module.exports = function (callback) {
                         balance = transEther(balance);
                         mdc.infoHashes.call(userAddress).then(function (infoHash) {
                             infoHash = transUtf8(infoHash);
-                            userInfos[userAddress] = {
+                            userInfos.push({
+                                "_id": i,
+                                "address": userAddress,
                                 "balance": balance,
                                 "infoHash": infoHash
-                            }
+                            });
                             i++;
                             work(i, work_cb);
                         }).catch(function(err){

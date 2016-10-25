@@ -206,27 +206,83 @@ module.exports = function (callback) {
         });
     }
     
-    showBalances();
-    testChangeSettings(function(){
+    function testRejectClaim(claimId, cb) {
+        mdc.rejectClaim(claimId, { from: accounts[0] }).then(function (transactionId) {
+            console.log('Reject Claim transaction ID: ', '' + transactionId);
+            cb();
+        }).catch(function(err){
+            console.log(err);
+            process.exit();
+        });
+    }
+    
+    function teatCaseForInit(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        testChangeSettings(function(){
+            cb();
+        });
+    }
+    
+    function testCaseForNewClaim(cb){
+        if(typeof(cb) === "undefined") cb = function(){};
         getTotalInfo(function(totalInfo){
             testSignUp(function(){
                 showBalances();
                 testClaim(function(){
+                    cb();
+                });
+            });
+        });
+    }
+    
+    function testCaseForPass(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        console.log("Testing for pass ...");
+        testCaseForNewClaim(function(){
+            getTotalInfo(function(totalInfo){
+                testInvestigateClaim(totalInfo.info.totalClaims, function(){
+                    showBalances();
                     getTotalInfo(function(totalInfo){
-                        testInvestigateClaim(totalInfo.info.totalClaims, function(){
+                        testPassClaim(totalInfo.info.totalClaims, function(){
                             showBalances();
                             getTotalInfo(function(totalInfo){
-                                testPassClaim(totalInfo.info.totalClaims, function(){
-                                    showBalances();
-                                    getTotalInfo(function(totalInfo){
-                                        process.exit();
-                                    });
-                                });
+                                console.log("Tested for pass");
+                                cb()
                             });
                         });
                     });
                 });
             });
+        });
+    }
+
+    function testCaseForReject(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        console.log("Testing for reject ...");
+        testCaseForNewClaim(function(){
+            getTotalInfo(function(totalInfo){
+                testInvestigateClaim(totalInfo.info.totalClaims, function(){
+                    showBalances();
+                    getTotalInfo(function(totalInfo){
+                        testRejectClaim(totalInfo.info.totalClaims, function(){
+                            showBalances();
+                            getTotalInfo(function(totalInfo){
+                                console.log("Tested for reject");
+                                cb()
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    }
+    
+    showBalances();
+    teatCaseForInit(function(){
+        testCaseForPass(function(){
+            testCaseForReject(function(){
+                process.exit();
+            })
         });
     });
 }

@@ -33,6 +33,7 @@ contract MDC {
     address public organizer;
     
     uint public maxOperatingCharge;
+    uint public averageOperatingCharge;
     
     uint8 public recommendationRewardRate;
     uint8 public operatingChargeRate;
@@ -51,11 +52,13 @@ contract MDC {
         }
 	}
 	
-	function changeSettings(uint8 _recommendationRewardRate, uint8 _operatingChargeRate, uint _claimFee) organizerRequired{
+	function changeSettings(uint8 _recommendationRewardRate, uint8 _operatingChargeRate, uint _claimFee, uint _averageOperatingCharge) organizerRequired{
+    	if(_averageOperatingCharge > maxOperatingCharge) throw;
     	if(_recommendationRewardRate > 100 || _operatingChargeRate > 100 || _recommendationRewardRate + _operatingChargeRate > 100) throw;
     	recommendationRewardRate = _recommendationRewardRate;
     	operatingChargeRate = _operatingChargeRate;
     	claimFee = _claimFee;
+    	averageOperatingCharge = _averageOperatingCharge;
 	}
 
 	function transferOrganizer(address new_organizer) organizerRequired {
@@ -91,7 +94,7 @@ contract MDC {
 	}
 	
 	function claim(bytes32 _name, bytes32 _country, bytes32 _id, uint _birthdate, bytes32 _phone, bytes32 _email, uint _timestamp, bytes32 _noncestr, bytes32 _reason) {
-    	if(operatingChargeBalance < maxOperatingCharge) throw;
+    	if(operatingChargeBalance < averageOperatingCharge) throw;
     	if(balances[msg.sender] < claimFee) throw;
     	if(status != 0) throw;
     	
@@ -134,6 +137,7 @@ contract MDC {
 	
 	function investigateClaim(uint claimID, uint _needMaxOperatingCharge) organizerRequired {
     	if(_needMaxOperatingCharge > maxOperatingCharge) throw;
+    	if(_needMaxOperatingCharge > operatingChargeBalance) throw;
     	ClaimInfo claim = claims[claimID];
     	if(claim.status != 0) throw;
     	

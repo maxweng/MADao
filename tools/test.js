@@ -30,6 +30,7 @@ module.exports = function (callback) {
         var variables = [
             ["organizer", transString],
             ["maxOperatingCharge", transEther],
+            ["averageOperatingCharge", transEther],
             ["recommendationRewardRate", transInt],
             ["operatingChargeRate", transInt],
             ["claimFee", transInt],
@@ -154,7 +155,7 @@ module.exports = function (callback) {
     }
     
     function testChangeSettings(cb) {
-        mdc.changeSettings(10, 15, 20, { from: accounts[0] }).then(function (transactionId) {
+        mdc.changeSettings(10, 15, 20, web3.toWei(5, "ether"), { from: accounts[0] }).then(function (transactionId) {
             console.log('Change settings transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){

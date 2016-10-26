@@ -17,8 +17,8 @@ module.exports = function (callback) {
     
     showBalances();
     
-    sendEther(accounts[0], accounts[9], 21267647932558653000);
-    sendEther(accounts[1], accounts[9], 21267647932558653000);
+    sendEther(accounts[0], accounts[9], 21267647932558644000);
+    sendEther(accounts[1], accounts[9], 21267647932558644000);
     
     showBalances();
 }

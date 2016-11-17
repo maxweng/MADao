@@ -53,7 +53,7 @@ contract MDC is usingOracleIt, usingUtils {
     function MDC() {
     }
     
-    function signUp(bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr, address recommender) {
+    function signUp(address recommender, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) {
         uint recommender_fee = 0;
         if(recommender != address(0)){
             recommender_fee = msg.value * recommendationRewardRate / 100;
@@ -86,7 +86,6 @@ contract MDC is usingOracleIt, usingUtils {
         }
         
         balances[msg.sender] += user_fee;
-        balances[recommender] += recommender_fee;
     }
     
     function minusBalance(address userAddress, uint price) internal {

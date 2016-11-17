@@ -196,7 +196,7 @@ module.exports = function (callback) {
     function testSignUp(cb) {
         console.log("Claimer Address: ", accounts[0]);
         console.log("Recommender Address: ", accounts[1]);
-        mdc.signUp("test name", "test country", hexEncode("310110198501081234"), "a1seb25f5q", accounts[1], { from: accounts[0], value: web3.toWei(1, "ether") }).then(function (transactionId) {
+        mdc.signUp(accounts[1], "test name", "test country", hexEncode("310110198501081234"), "a1seb25f5q", { from: accounts[0], value: web3.toWei(1, "ether") }).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){

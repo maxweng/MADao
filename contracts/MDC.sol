@@ -15,6 +15,7 @@ contract MDC is usingOracleIt, usingUtils {
     struct Flight{
         bytes32 flightNumber;
         uint departureTime;
+        string queryNo;
         bool claimed;
     }
     
@@ -109,12 +110,17 @@ contract MDC is usingOracleIt, usingUtils {
         flights[msg.sender].push(Flight({
             flightNumber: _flightNumber,
             departureTime: _departureTime,
+            queryNo: strConcat(bytes32ToString(_flightNumber), " ", bytes32ToString(uintToBytes(_departureTime))),
             claimed: false
         }));
     }
     
     function getClaimFee() oracleItAPI internal returns (uint claimFee) {
         claimFee = oracleIt.getPrice("AirCrash") + defaultGasLimit * defaultGasPrice;
+    }
+    
+    function claimQuery(string queryNo, bytes32 _name, bytes32 _id ) internal returns (uint oracleItId) {
+        oracleItId = oracleItQuery("AirCrash", strConcat(queryNo, " ", bytes32ToString(_name), " ", bytes32ToString(_id)));
     }
     
     function claim(bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr, bytes32 _flightNumber, uint _departureTime) userAvailable {
@@ -125,18 +131,20 @@ contract MDC is usingOracleIt, usingUtils {
         
         uint length = flights[msg.sender].length;
         bool hasFlight = false;
+        string memory queryNo;
         for(uint i=0; i<length; i++){
             var flight = flights[msg.sender][i];
             if(flight.claimed) continue;
             if(flight.flightNumber == _flightNumber && flight.departureTime == _departureTime){
                 flight.claimed = true;
                 hasFlight = true;
+                queryNo = flight.queryNo;
                 break;
             }
         }
         if(!hasFlight) throw;
         
-        uint oracleItId = oracleItQuery("AirCrash", strConcat(bytes32ToString(_flightNumber), bytes32ToString(uintToBytes(_departureTime))));
+        uint oracleItId = claimQuery(queryNo, _name, _id);
         if(oracleItId == 0) throw;
         
         totalClaims++;

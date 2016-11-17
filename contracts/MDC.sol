@@ -54,13 +54,14 @@ contract MDC is usingOracleIt, usingUtils {
     }
     
     function signUp(bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr, address recommender) {
-        if(msg.value < minUserAvailableBalance) throw;
         uint recommender_fee = 0;
         if(recommender != address(0)){
             recommender_fee = msg.value * recommendationRewardRate / 100;
         }
         uint user_fee = msg.value - recommender_fee;
         if(user_fee + recommender_fee != msg.value) throw;
+        
+        if(user_fee < minUserAvailableBalance) throw;
         
         bytes32 _infoHash = sha3(_name, _country, _id, _noncestr);
         

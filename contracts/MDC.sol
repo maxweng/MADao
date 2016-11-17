@@ -127,7 +127,7 @@ contract MDC is usingOracleIt, usingUtils {
         oracleItId = oracleItQuery("AirCrash", strConcat(queryNo, " ", bytes32ToString(_name), " ", bytes32ToString(_id)));
     }
     
-    function claim(bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr, bytes32 _flightNumber, uint _departureTime) userAvailable {
+    function claim(bytes32 _flightNumber, uint _departureTime, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) userAvailable {
         if(infoHashes[msg.sender].hash != sha3(_name, _country, _id, _noncestr)) throw;
 
         uint claimFee = getClaimFee();

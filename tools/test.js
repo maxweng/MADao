@@ -2,10 +2,25 @@ module.exports = function (callback) {
     var accounts = web3.eth.accounts;
     var mdc = MDC.deployed();
     
+    var TEST_DEPARTURETIME = Date.now() / 1000 + 3600;
+    
     var transInt = function(value){return +value};
     var transUtf8 = function(value){return web3.toUtf8(value)};
     var transString = function(value){return "" + value};
     var transEther = function(value){return +web3.fromWei(value, "ether")};
+    var transBool = function(value){return !!value};
+    
+    var hexEncode = function(text){
+        var hex, i;
+    
+        var result = "";
+        for (i=0; i<text.length; i++) {
+            hex = text.charCodeAt(i).toString(16);
+            result += ("000"+hex).slice(-4);
+        }
+    
+        return "0x" + result;
+    }
     
     function showBalances(cb) {
         if(typeof(cb) === "undefined") cb = function(){};
@@ -28,16 +43,8 @@ module.exports = function (callback) {
         if(typeof(cb) === "undefined") cb = function(){};
         var info = {};
         var variables = [
-            ["organizer", transString],
-            ["maxOperatingCharge", transEther],
-            ["averageOperatingCharge", transEther],
-            ["recommendationRewardRate", transInt],
-            ["operatingChargeRate", transInt],
-            ["claimFee", transInt],
-            ["status", transInt],
-            ["totalBalances", transEther],
-            ["operatingChargeBalance", transEther],
             ["totalUserAddresses", transInt],
+            ["totalAvailableUserAddresses", transInt],
             ["totalClaims", transInt],
         ];
         var work = function(i, work_cb){
@@ -58,6 +65,37 @@ module.exports = function (callback) {
         });
     }
     
+    function getFlights(address, cb){
+        mdc.getFlightCount.call(address).then(function (count) {
+            count = transInt(count);
+            var flights = [];
+            var work = function(i, work_cb){
+                if(i >= count) return work_cb();
+                mdc.flights.call(address, i).then(function (res) {
+                    var flight = {
+                        "_id": i,
+                        "flightNumber": transUtf8(res[0]),
+                        "departureTime": transInt(res[1]),
+                        "queryNo": transString(res[2]),
+                        "claimed": transBool(res[3]),
+                    };
+                    flights.push(flight);
+                    i++;
+                    work(i, work_cb);
+                }).catch(function(err){
+                    console.log(err);
+                    process.exit();
+                });
+            }
+            work(0, function(){
+                cb(flights);
+            });
+        }).catch(function(err){
+            console.log(err);
+            process.exit();
+        });
+    }
+    
     function getUserInfos(cb) {
         if(typeof(cb) === "undefined") cb = function(){};
         userInfos = [];
@@ -71,16 +109,21 @@ module.exports = function (callback) {
                     userAddress = "" + userAddress;
                     mdc.balances.call(userAddress).then(function (balance) {
                         balance = transEther(balance);
-                        mdc.infoHashes.call(userAddress).then(function (infoHash) {
-                            infoHash = transUtf8(infoHash);
-                            userInfos.push({
-                                "_id": i,
-                                "address": userAddress,
-                                "balance": balance,
-                                "infoHash": infoHash
+                        mdc.infoHashes.call(userAddress).then(function (res) {
+                            var infoHash = transString(res[0]);
+                            var available = transBool(res[1]);
+                            getFlights(userAddress, function(flights){
+                                userInfos.push({
+                                    "_id": i,
+                                    "address": userAddress,
+                                    "balance": balance,
+                                    "infoHash": infoHash,
+                                    "available": available,
+                                    "flights": flights
+                                });
+                                i++;
+                                work(i, work_cb);
                             });
-                            i++;
-                            work(i, work_cb);
                         }).catch(function(err){
                             console.log(err);
                             process.exit();
@@ -95,7 +138,7 @@ module.exports = function (callback) {
                 });
             }
             work(1, function(){
-                console.log("MDC user infos: ", userInfos);
+                console.log("MDC user infos: ", JSON.stringify(userInfos));
                 cb(userInfos);
             });
         });
@@ -110,22 +153,16 @@ module.exports = function (callback) {
                 if(i > totalClaims){
                     return work_cb();
                 }
-                mdc.getClaim.call(i).then(function (res) {
+                mdc.claims.call(i).then(function (res) {
                     claims.push({
                         "_id": i,
                         "claimer": transString(res[0]),
-                        "reason": transUtf8(res[1]),
-                        "status": transInt(res[2]),
-                        "userInfo": {
-                            "name": transUtf8(res[3]),
-                            "country": transUtf8(res[4]),
-                            "id": transUtf8(res[5]),
-                            "birthdate": transInt(res[6]),
-                            "phone": transUtf8(res[7]),
-                            "email": transUtf8(res[8]),
-                            "timestamp": transInt(res[9]),
-                            "noncestr": transUtf8(res[10])
-                        }
+                        "claimerName": transUtf8(res[1]),
+                        "claimerCountry": transUtf8(res[2]),
+                        "claimerId": transUtf8(res[3]),
+                        "claimerNoncestr": transUtf8(res[4]),
+                        "oracleItId": transInt(res[5]),
+                        "status": transInt(res[6]),
                     });
                     i++;
                     work(i, work_cb);
@@ -156,21 +193,21 @@ module.exports = function (callback) {
         });
     }
     
-    function testChangeSettings(cb) {
-        mdc.changeSettings(10, 15, 20, web3.toWei(5, "ether"), { from: accounts[0] }).then(function (transactionId) {
-            console.log('Change settings transaction ID: ', '' + transactionId);
+    function testSignUp(cb) {
+        console.log("Claimer Address: ", accounts[0]);
+        console.log("Recommender Address: ", accounts[1]);
+        mdc.signUp("test name", "test country", hexEncode("310110198501081234"), "a1seb25f5q", accounts[1], { from: accounts[0], value: web3.toWei(10, "ether") }).then(function (transactionId) {
+            console.log('Sign up transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
             console.log(err);
             process.exit();
         });
     }
-    
-    function testSignUp(cb) {
-        console.log("Claimer Address: ", accounts[0]);
-        console.log("Recommender Address: ", accounts[1]);
-        mdc.signUp("_test123", accounts[1], { from: accounts[0], value: web3.toWei(100, "ether") }).then(function (transactionId) {
-            console.log('Sign up transaction ID: ', '' + transactionId);
+
+    function testAddFlight(cb) {
+        mdc.addFlight("FN8595", TEST_DEPARTURETIME, { from: accounts[0], value: web3.toWei(10, "ether") }).then(function (transactionId) {
+            console.log('Add flight transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
             console.log(err);
@@ -179,7 +216,7 @@ module.exports = function (callback) {
     }
     
     function testClaim(cb) {
-        mdc.claim("_test name", "_test country", "_310110198501081234", 1477306442735, "_13521234567", "_test@test.test", 1477306474088, "_a1seb25f5q", "_I Need Money", { from: accounts[0] }).then(function (transactionId) {
+        mdc.claim("test name", "test country", hexEncode("310110198501081234"), "a1seb25f5q", "FN8595", TEST_DEPARTURETIME, { from: accounts[0] }).then(function (transactionId) {
             console.log('Claim transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -188,103 +225,13 @@ module.exports = function (callback) {
         });
     }
     
-    function testInvestigateClaim(claimId, cb) {
-        mdc.investigateClaim(claimId, web3.toWei(1, "ether"), { from: accounts[0] }).then(function (transactionId) {
-            console.log('Investigate Claim transaction ID: ', '' + transactionId);
-            cb();
-        }).catch(function(err){
-            console.log(err);
-            process.exit();
-        });
-    }
-
-    function testPassClaim(claimId, cb) {
-        mdc.passClaim(claimId, 10, web3.toWei(100, "ether"), { from: accounts[0] }).then(function (transactionId) {
-            console.log('Pass Claim transaction ID: ', '' + transactionId);
-            cb();
-        }).catch(function(err){
-            console.log(err);
-            process.exit();
-        });
-    }
-    
-    function testRejectClaim(claimId, cb) {
-        mdc.rejectClaim(claimId, { from: accounts[0] }).then(function (transactionId) {
-            console.log('Reject Claim transaction ID: ', '' + transactionId);
-            cb();
-        }).catch(function(err){
-            console.log(err);
-            process.exit();
-        });
-    }
-    
-    function teatCaseForInit(cb) {
-        if(typeof(cb) === "undefined") cb = function(){};
-        testChangeSettings(function(){
-            cb();
-        });
-    }
-    
-    function testCaseForNewClaim(cb){
-        if(typeof(cb) === "undefined") cb = function(){};
-        getTotalInfo(function(totalInfo){
-            testSignUp(function(){
-                showBalances();
-                testClaim(function(){
-                    cb();
-                });
-            });
-        });
-    }
-    
-    function testCaseForPass(cb) {
-        if(typeof(cb) === "undefined") cb = function(){};
-        console.log("Testing for pass ...");
-        testCaseForNewClaim(function(){
-            getTotalInfo(function(totalInfo){
-                testInvestigateClaim(totalInfo.info.totalClaims, function(){
-                    showBalances();
-                    getTotalInfo(function(totalInfo){
-                        testPassClaim(totalInfo.info.totalClaims, function(){
-                            showBalances();
-                            getTotalInfo(function(totalInfo){
-                                console.log("Tested for pass");
-                                cb()
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    }
-
-    function testCaseForReject(cb) {
-        if(typeof(cb) === "undefined") cb = function(){};
-        console.log("Testing for reject ...");
-        testCaseForNewClaim(function(){
-            getTotalInfo(function(totalInfo){
-                testInvestigateClaim(totalInfo.info.totalClaims, function(){
-                    showBalances();
-                    getTotalInfo(function(totalInfo){
-                        testRejectClaim(totalInfo.info.totalClaims, function(){
-                            showBalances();
-                            getTotalInfo(function(totalInfo){
-                                console.log("Tested for reject");
-                                cb()
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    }
-    
     showBalances();
-    teatCaseForInit(function(){
-        testCaseForPass(function(){
-            testCaseForReject(function(){
-                process.exit();
-            })
+    getTotalInfo(function(totalInfo){
+        testSignUp(function(){
+            showBalances();
+            testAddFlight(function(){
+                getTotalInfo(process.exit);
+            });
         });
     });
 }

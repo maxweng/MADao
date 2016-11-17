@@ -1,6 +1,7 @@
 .DS_Store
 .idea
 .project
+.node-xmlhttprequest-sync-*
 node_modules
 build
 !.gitkeep

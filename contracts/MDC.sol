@@ -27,7 +27,7 @@ contract MDC is usingOracleIt, usingUtils {
     mapping (address => uint) public balances;
     
     mapping (address => UserInfo) public infoHashes;
-    mapping (address => Flight[]) flights;
+    mapping (address => Flight[]) public flights;
     
     mapping (uint => address) public userAddresses;
     uint public totalUserAddresses;
@@ -103,7 +103,7 @@ contract MDC is usingOracleIt, usingUtils {
         bool hasFlight = false;
         for(uint i=0; i<length; i++){
             var flight = flights[msg.sender][i];
-            if(flight.flightNumber == _flightNumber && flight.departureTime >= _departureTime - 3600 * 2 && flight.departureTime <= _departureTime + 3600 * 2){
+            if(flight.flightNumber == _flightNumber && flight.departureTime >= _departureTime - 7200 && flight.departureTime <= _departureTime + 7200){
                 throw;
             }
         }
@@ -113,6 +113,10 @@ contract MDC is usingOracleIt, usingUtils {
             queryNo: strConcat(bytes32ToString(_flightNumber), " ", bytes32ToString(uintToBytes(_departureTime))),
             claimed: false
         }));
+    }
+    
+    function getFlightCount(address userAddress) returns (uint count) {
+        count = flights[userAddress].length;
     }
     
     function getClaimFee() oracleItAPI internal returns (uint claimFee) {

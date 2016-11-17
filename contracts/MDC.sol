@@ -124,7 +124,7 @@ contract MDC is usingOracleIt, usingUtils {
     }
     
     function claimQuery(string queryNo, bytes32 _name, bytes32 _id ) internal returns (uint oracleItId) {
-        oracleItId = oracleItQuery("AirCrash", strConcat(queryNo, " ", bytes32ToString(_name), " ", bytes32ToString(_id)));
+        oracleItId = oracleItQuery("AirCrash", strConcat(queryNo, " ", bytes32ToString(_name), " ", bytes32ToString(_id)), defaultGasLimit, defaultGasPrice);
     }
     
     function claim(bytes32 _flightNumber, uint _departureTime, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) userAvailable {

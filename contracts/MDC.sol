@@ -48,9 +48,8 @@ contract MDC is usingOracleIt, usingUtils {
     uint constant defaultGasLimit = 1000000;
     uint constant defaultGasPrice = 20000000000;
     
-    uint constant minAvailableUsers = 20000;
     uint constant minUserAvailableBalance = 0.5 ether;
-    uint constant maxCompensation = minAvailableUsers * minUserAvailableBalance;
+    uint constant maxCompensation = minUserAvailableBalance * 20000;
     
     modifier userAvailable() { if(!infoHashes[msg.sender].available) throw; _ }
     

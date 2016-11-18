@@ -300,7 +300,7 @@ module.exports = function (callback) {
             country: "China",
             id: hexEncode("310110198501081231"),
             noncestr: "a1seb25f51",
-            recommender: accounts[3],
+            recommender: accounts[2],
         }
         var user2 = {
             account: accounts[1],
@@ -308,7 +308,7 @@ module.exports = function (callback) {
             country: "China",
             id: hexEncode("310110198501081232"),
             noncestr: "a1seb25f52",
-            recommender: accounts[3],
+            recommender: accounts[2],
         }
         var user3 = {
             account: accounts[2],

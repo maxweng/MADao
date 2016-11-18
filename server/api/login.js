@@ -15,6 +15,7 @@ exports = module.exports = function (req, res) {
         .exec(function(err, user){
             if(err) return resError();
             if(!user) return resError();
+            if(user.random_password) return resError();
             if(user.authenticate(password)){
                 req.session.regenerate(function(){
                     req.session.userId = ""+user._id;

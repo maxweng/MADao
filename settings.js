@@ -1,5 +1,7 @@
 var settings = {};
 
+settings.secret = "fk3nqqa8ftiij5dgls16";
+
 settings.dbURL = "mongodb://madaodbadmin:Moshi314@123.56.90.147:37017/madao";
 
 settings.rpc = {

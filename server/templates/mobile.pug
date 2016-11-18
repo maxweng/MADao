@@ -1,0 +1,23 @@
+
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='initial-scale=1,maximum-scale=1,user-scalable=no,width=device-width')
+    meta(name='format-detection', content='telephone=no')
+    meta(name='format-detection', content='email=no')
+    meta(name='format-detection', content='address=no')
+    meta(name='format-detection', content='date=no')
+    link(rel='shortcut icon', type='image/png', href='images/favicon.png')
+    title madaoClient
+    // inject:css 
+    link(href='/static/mobile/app.9b717e54ddbd867304c669479c96b1ab.css', rel='stylesheet')
+    // endinject 
+    // injectCordova 
+  body(ng-app='madaoClient')
+    .view-page
+    script window.HOST = "";
+            window.STATIC_HOST = "/static/mobile";
+    // inject:js 
+    script(src='/static/mobile/app.1c70e27dd53500b0fe75a0e2bccb63fb.js')
+    // endinject 

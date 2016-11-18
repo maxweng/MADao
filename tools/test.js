@@ -2,7 +2,7 @@ module.exports = function (callback) {
     var accounts = web3.eth.accounts;
     var mdc = MDC.deployed();
     
-    var TEST_DEPARTURETIME = parseInt(Date.now() / 1000 + 3600);
+    var now = Date.now();
     
     var transInt = function(value){return +value};
     var transUtf8 = function(value){return web3.toUtf8(value)};
@@ -27,6 +27,7 @@ module.exports = function (callback) {
         console.log("MDC Balance: ", web3.fromWei(+web3.eth.getBalance(mdc.address), "ether"));
         console.log("Account #0 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[0]), "ether"));
         console.log("Account #1 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[1]), "ether"));
+        console.log("Account #2 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[2]), "ether"));
         cb();
     }
 
@@ -195,10 +196,24 @@ module.exports = function (callback) {
         });
     }
     
-    function testSignUp(cb) {
-        console.log("Claimer Address: ", accounts[0]);
-        console.log("Recommender Address: ", accounts[1]);
-        mdc.signUp(accounts[1], "test name", "test country", hexEncode("310110198501081234"), "a1seb25f5q", { from: accounts[0], value: web3.toWei(1, "ether") }).then(function (transactionId) {
+    function testSignUp(user, cb) {
+        if(typeof(cb) === "undefined"){
+            cb = user;
+            user = null;
+        }
+        if(!user){
+            user = {
+                account: accounts[0],
+                name: "test name",
+                country: "China",
+                id: hexEncode("310110198501081234"),
+                noncestr: "a1seb25f5q",
+                recommender: accounts[1],
+            }
+        }
+        console.log("Claimer Address: ", user.account);
+        console.log("Recommender Address: ", user.recommender);
+        mdc.signUp(user.recommender, user.name, user.country, user.id, user.noncestr, { from: user.account, value: web3.toWei(1, "ether") }).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -207,8 +222,28 @@ module.exports = function (callback) {
         });
     }
 
-    function testAddFlight(cb) {
-        mdc.addFlight("FN8595", TEST_DEPARTURETIME, { from: accounts[0] }).then(function (transactionId) {
+    function testAddFlight(userFlight, cb) {
+        if(typeof(cb) === "undefined"){
+            cb = userFlight;
+            userFlight = null;
+        }
+        if(!userFlight){
+            userFlight = {
+                user: {
+                    account: accounts[0],
+                    name: "test name",
+                    country: "China",
+                    id: hexEncode("310110198501081234"),
+                    noncestr: "a1seb25f5q",
+                    recommender: accounts[1],
+                },
+                flight: {
+                    flightNumber: "FN8595",
+                    departureTime: parseInt(now / 1000 + 3600)
+                }
+            }
+        }
+        mdc.addFlight(userFlight.flight.flightNumber, userFlight.flight.departureTime, { from: userFlight.user.account }).then(function (transactionId) {
             console.log('Add flight transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -217,8 +252,28 @@ module.exports = function (callback) {
         });
     }
 
-    function testClaim(cb) {
-        mdc.claim("FN8595", TEST_DEPARTURETIME, "test name", "test country", hexEncode("310110198501081234"), "a1seb25f5q", { from: accounts[0] }).then(function (transactionId) {
+    function testClaim(userFlight, cb) {
+        if(typeof(cb) === "undefined"){
+            cb = userFlight;
+            userFlight = null;
+        }
+        if(!userFlight){
+            userFlight = {
+                user: {
+                    account: accounts[0],
+                    name: "test name",
+                    country: "China",
+                    id: hexEncode("310110198501081234"),
+                    noncestr: "a1seb25f5q",
+                    recommender: accounts[1],
+                },
+                flight: {
+                    flightNumber: "FN8595",
+                    departureTime: parseInt(now / 1000 + 3600)
+                }
+            }
+        }
+        mdc.claim(userFlight.flight.flightNumber, userFlight.flight.departureTime, userFlight.user.name, userFlight.user.country, userFlight.user.id, userFlight.user.noncestr, { from: userFlight.user.account }).then(function (transactionId) {
             console.log('Claim transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -227,15 +282,90 @@ module.exports = function (callback) {
         });
     }
     
-    showBalances();
-    getTotalInfo(function(totalInfo){
+    function testCaseSimple(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
         testSignUp(function(){
-            showBalances();
             testAddFlight(function(){
-                testClaim(function(){
-                    getTotalInfo(process.exit);
+                testClaim(cb);
+            });
+        });
+    }
+    
+    function testCaseFull(cb) {
+        if(typeof(cb) === "undefined") cb = function(){};
+        
+        var user1 = {
+            account: accounts[0],
+            name: "test name1",
+            country: "China",
+            id: hexEncode("310110198501081231"),
+            noncestr: "a1seb25f51",
+            recommender: accounts[3],
+        }
+        var user2 = {
+            account: accounts[1],
+            name: "test name2",
+            country: "China",
+            id: hexEncode("310110198501081232"),
+            noncestr: "a1seb25f52",
+            recommender: accounts[3],
+        }
+        var user3 = {
+            account: accounts[2],
+            name: "test name3",
+            country: "China",
+            id: hexEncode("310110198501081233"),
+            noncestr: "a1seb25f53",
+            recommender: "",
+        }
+        var flight1 = {
+            flightNumber: "FN8591",
+            departureTime: parseInt(now / 1000 + 3600) + 1
+        }
+        var flight2 = {
+            flightNumber: "FN8592",
+            departureTime: parseInt(now / 1000 + 3600) + 2
+        }
+        var userFlight1 = {
+            user: user1,
+            flight: flight1
+        }
+        var userFlight2 = {
+            user: user1,
+            flight: flight2
+        }
+        
+        testSignUp(user1, function(){
+            testSignUp(user2, function(){
+                testSignUp(user3, function(){
+                    showBalances();
+                    getTotalInfo(function(){
+                        testAddFlight(userFlight1, function(){
+                            testAddFlight(userFlight2, function(){
+                                testClaim(userFlight1, cb);
+                            });
+                        });
+                    });
                 });
             });
+        });
+    }
+    
+/*
+    showBalances();
+    getTotalInfo(function(totalInfo){
+        testCaseSimple(function(){
+            showBalances();
+            getTotalInfo(process.exit);
+        });
+    });
+*/
+
+    showBalances();
+    getTotalInfo(function(totalInfo){
+        testCaseFull(function(){
+            showBalances();
+            getTotalInfo(process.exit);
         });
     });
 }

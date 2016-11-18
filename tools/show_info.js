@@ -27,6 +27,7 @@ module.exports = function (callback) {
         console.log("MDC Balance: ", web3.fromWei(+web3.eth.getBalance(mdc.address), "ether"));
         console.log("Account #0 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[0]), "ether"));
         console.log("Account #1 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[1]), "ether"));
+        console.log("Account #2 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[2]), "ether"));
         cb();
     }
 

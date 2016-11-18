@@ -5,6 +5,7 @@ module.exports = function (callback) {
         if(typeof(cb) === "undefined") cb = function(){};
         console.log("Account #0 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[0]), "ether"));
         console.log("Account #1 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[1]), "ether"));
+        console.log("Account #2 Balance: ", web3.fromWei(+web3.eth.getBalance(accounts[2]), "ether"));
         cb();
     }
     
@@ -19,6 +20,7 @@ module.exports = function (callback) {
     
     sendEther(accounts[0], accounts[9], 21267647932558644000);
     sendEther(accounts[1], accounts[9], 21267647932558644000);
+    sendEther(accounts[2], accounts[9], 21267647932558644000);
     
     showBalances();
 }

@@ -6,9 +6,11 @@ var settings = require('../settings');
 
 var models = require("./models");
 
+var contracts = require("./contracts");
+
 mongoose.connect(settings.dbURL);
 
 exports = module.exports = function(cb) {
     if(typeof(cb) === "undefined") cb = function(){};
-    cb();
+    contracts.load(cb);
 }

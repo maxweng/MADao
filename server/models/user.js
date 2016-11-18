@@ -7,7 +7,15 @@ var userSchema = new mongoose.Schema({
     email: { type: String, default: '' },
     hashed_password: { type: String, default: '' },
     salt: { type: String, default: '' },
-    is_superuser: { type: Boolean, default: false }
+    wechat_openid: { type: String, default: '' },
+    
+    random_password: { type: Boolean, default: false },
+    
+    is_stuff: { type: Boolean, default: false },
+    is_superuser: { type: Boolean, default: false },
+    
+    address: { type: String, default: '' },
+    encrypted_wallet_key: { type: String, default: '' },
 });
 
 userSchema.plugin(userPlugin, {});

@@ -36,4 +36,7 @@ exports = module.exports = function(app) {
         res.sendStatus(200);
     });
     app.post('/api', routes.api.home);
+    
+    app.post('/api/login', routes.api.login);
+    app.post('/api/logout', routes.api.logout);
 };

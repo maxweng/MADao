@@ -18,6 +18,7 @@
     "mongoose": "^4.6.6",
     "mongoose-unique-validator": "^1.0.2",
     "mongoose-user": "0.0.1",
+    "pug": "^2.0.0-beta6",
     "web3": "^0.17.0-beta"
   }
 }

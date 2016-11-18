@@ -31,6 +31,10 @@ exports = module.exports = function(app) {
     
     app.set('port', process.env.PORT || 8000);
     
+    app.get('/', function(req, res) {
+        res.render("mobile", {});
+    });
+    
     app.get('/api', function(req, res) {
         res.header("Access-Control-Allow-Origin", "*");
         res.sendStatus(200);

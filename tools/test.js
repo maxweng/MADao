@@ -161,8 +161,10 @@ module.exports = function (callback) {
                         "claimerCountry": transUtf8(res[2]),
                         "claimerId": transUtf8(res[3]),
                         "claimerNoncestr": transUtf8(res[4]),
-                        "oracleItId": transInt(res[5]),
-                        "status": transInt(res[6]),
+                        "flightNumber": transUtf8(res[5]),
+                        "departureTime": transInt(res[6]),
+                        "oracleItId": transInt(res[7]),
+                        "status": transInt(res[8]),
                     });
                     i++;
                     work(i, work_cb);

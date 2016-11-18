@@ -1,13 +1,15 @@
 import "./api/OracleItAPI.sol";
 import "./api/Utils.sol";
 
-contract MDC is usingOracleIt, usingUtils {    
+contract MDC is usingOracleIt, usingUtils {
     struct ClaimInfo{
         address claimer;
         bytes32 claimerName;
         bytes32 claimerCountry;
         bytes32 claimerId;
         bytes32 claimerNoncestr;
+        bytes32 flightNumber;
+        uint departureTime;
         uint oracleItId;
         uint8 status; // 0: init, 2: investigating, 6: passed, 8: rejected
     }
@@ -37,6 +39,8 @@ contract MDC is usingOracleIt, usingUtils {
     mapping (uint => ClaimInfo) public claims;
     uint public totalClaims;
     
+    mapping (bytes32 => uint[]) public idClaimIds;
+    
     mapping (uint => uint) public oracleItIdClaimId;
     
     uint8 constant recommendationRewardRate = 10;
@@ -54,6 +58,8 @@ contract MDC is usingOracleIt, usingUtils {
     }
     
     function signUp(address recommender, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) {
+        if(_name == "" || _id == "") throw;
+        
         uint recommender_fee = 0;
         if(recommender != address(0)){
             recommender_fee = msg.value * recommendationRewardRate / 100;
@@ -129,14 +135,23 @@ contract MDC is usingOracleIt, usingUtils {
     
     function claim(bytes32 _flightNumber, uint _departureTime, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) userAvailable {
         if(infoHashes[msg.sender].hash != sha3(_name, _country, _id, _noncestr)) throw;
+        
+        uint i;
+        uint length;
+        
+        length = idClaimIds[_id].length;
+        for(i=0; i<length; i++){
+            var oldClaim = claims[idClaimIds[_id][i]];
+            if(oldClaim.flightNumber == _flightNumber && oldClaim.departureTime == _departureTime && oldClaim.claimerName == _name && oldClaim.claimerId == _id) throw;
+        }
 
         uint claimFee = getClaimFee();
         if(balances[msg.sender] < claimFee) throw;
         
-        uint length = flights[msg.sender].length;
+        length = flights[msg.sender].length;
         bool hasFlight = false;
         string memory queryNo;
-        for(uint i=0; i<length; i++){
+        for(i=0; i<length; i++){
             var flight = flights[msg.sender][i];
             if(flight.claimed) continue;
             if(flight.flightNumber == _flightNumber && flight.departureTime == _departureTime){
@@ -159,11 +174,15 @@ contract MDC is usingOracleIt, usingUtils {
             claimerCountry: _country,
             claimerId: _id,
             claimerNoncestr: _noncestr,
+            
+            flightNumber: _flightNumber,
+            departureTime: _departureTime,
 
             oracleItId: oracleItId,
             status: 2
         });
         
+        idClaimIds[_id].push(totalClaims);
         oracleItIdClaimId[oracleItId] = totalClaims;
         
         minusBalance(msg.sender, claimFee);

@@ -5,6 +5,9 @@
   "devDependencies": {},
   "scripts": {
     "testrpc": "testrpc -m \"veteran improve climb ketchup thumb near royal entry action index mom mesh\"",
+    "testnetinit": "NETWORK=testnet truffle migrate --reset --network testnet",
+    "testnetserver": "PORT=8002 NETWORK=testnet node server/app.js",
+    "testnettruffleconsole": "NETWORK=testnet truffle console --network testnet",
     "server": "truffle migrate --reset && node server/app.js"
   },
   "dependencies": {

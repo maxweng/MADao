@@ -1,3 +1,5 @@
+var settings = require("./settings");
+
 module.exports = {
   build: {
     "index.html": "index.html",
@@ -9,8 +11,6 @@ module.exports = {
     ],
     "images/": "images/"
   },
-  rpc: {
-    host: "localhost",
-    port: 8545
-  }
+  rpc: settings.rpc,
+  networks: settings.networks
 };

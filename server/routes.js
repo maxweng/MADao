@@ -31,6 +31,10 @@ exports = module.exports = function(app) {
     
     app.set('port', process.env.PORT || 8000);
     
+    app.get('/' + settings.wechatAuthFileName, function(req, res) {
+        res.send(settings.wechatAuthFileValue);
+    });
+    
     app.get('/', function(req, res) {
         res.render("mobile", {});
     });
@@ -44,6 +48,7 @@ exports = module.exports = function(app) {
     app.post('/api/login', routes.api.login);
     app.post('/api/logout', routes.api.logout);
     app.all('/api/me', middlewares.login_required, routes.api.me);
+    app.post('/api/wechatlogin', middlewares.check_wechat_oauth, routes.api.wechatlogin);
     
     app.get('/api/coinprice', routes.api.coinprice);
 };

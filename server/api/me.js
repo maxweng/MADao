@@ -17,7 +17,7 @@ exports = module.exports = function (req, res) {
             req.user[fieldName] = req.body[fieldName] || "";
         }
         req.user.save(function(err){
-            if(err) return res.status(500).send("something went wrong.");
+            if(err) return res.status(500).json({"detail": "something went wrong."});
             return getResponse();
         });
     }else{

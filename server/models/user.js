@@ -7,6 +7,8 @@ var userSchema = new mongoose.Schema({
     email: { type: String, default: '' },
     hashed_password: { type: String, default: '' },
     salt: { type: String, default: '' },
+    nickname: { type: String, default: '' },
+    header: { type: String, default: '' },
     wechat_openid: { type: String, default: '' },
     
     random_password: { type: Boolean, default: false },

@@ -16,6 +16,7 @@ boot(function(){
         var password = args[2];
         var user = new User({
             name: name,
+            nickname: name,
             email: email,
             password: password,
             is_stuff: true,

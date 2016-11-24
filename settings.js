@@ -9,6 +9,9 @@ settings.rpc = {
 
 settings.avgBlockTime = 15;
 
+settings.wechatAuthFileName = "MP_verify_KnjeC1ANoqDsJ4kl.txt";
+settings.wechatAuthFileValue = "KnjeC1ANoqDsJ4kl";
+
 if(process.env.NETWORK == "testnet"){
     settings.dbURL = "mongodb://testnetmadaodbadmin:Moshi314@123.56.90.147:37017/testnetmadao";
     settings.sysAccountAddress = process.env.SYS_ACCOUNT_ADDRESS || "0x14cB23Cf2deacA1FCCd2F5400c4A8D32595e726f";

@@ -6,7 +6,7 @@ exports = module.exports = function (req, res) {
         res.status(204).send();
     }
     var resError = function(){
-        res.status(400).send("incorrect name or password.");
+        res.status(400).json({"detail": "incorrect name or password."});
     }
     var name = req.body.name;
     var password = req.body.password;

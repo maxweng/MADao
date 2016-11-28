@@ -1,0 +1,58 @@
+html
+    head
+        meta(name='viewport', content='width=device-width, initial-scale=1.0,user-scalable=no', charset='utf-8')
+        title Wechat Test
+    body
+        button#show_login_url show login url
+        br
+        #display_login_url
+        button#login login
+        br
+        button#logout logout
+        br
+        button#show_user_info show user info
+        br
+        #display_user_info
+        button#show_oauthData show oauthData
+        br
+        #display_oauthData
+        button#show_islogin show isLogin
+        br
+        #display_islogin
+        button#show_code show code
+        br
+        script(src=`/static/wechat/wechat_oauth_sdk.js?appkey=${WECHAT_APP_ID}&debug=true&_=0.1`, type='text/javascript', charset='utf-8')
+        script(src='http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js', type='text/javascript')
+        script.
+            $(function(){
+                $("#show_login_url").click(function(e){
+                    $("#display_login_url").html(WXOauth.showLogin());
+                });
+                $("#login").click(function(e){
+                    WXOauth.login(undefined, undefined, false);
+                });
+                $("#logout").click(function(e){
+                    WXOauth.logout();
+                    alert("Logout!");
+                });
+                $("#show_user_info").click(function(e){
+                    if(WXOauth.isLogin()){
+                        WXOauth.getUserInfo(function(data){
+                            $("#display_user_info").html(JSON.stringify(data));
+                        },function(data){
+                            alert(data);
+                        });
+                    }else{
+                        WXOauth.login(undefined, undefined, false);
+                    }
+                });
+                $("#show_oauthData").click(function(e){
+                    $("#display_oauthData").html(JSON.stringify(WXOauth.oauthData));
+                });
+                $("#show_islogin").click(function(e){
+                    $("#display_islogin").html(""+WXOauth.isLogin());
+                });
+                $("#show_code").click(function(e){
+                    alert(location.href);
+                });
+            });

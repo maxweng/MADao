@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 var User = mongoose.models.User;
 
 exports = module.exports = function (req, res) {
-    var fieldNames = ["wechat_openid", "address", "encrypted_wallet_key"];
+    var fieldNames = ["wechat_openid", "address", "encrypted_wallet_key", "nickname", "header"];
     var getResponse = function(){
         var resJSON = {};
         for(var i=0; i<fieldNames.length; i++){

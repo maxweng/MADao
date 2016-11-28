@@ -2,6 +2,11 @@ var settings = {};
 
 settings.secret = "fk3nqqa8ftiij5dgls16";
 
+settings.DEBUG = true;
+
+settings.MAIN_HOST = "devmadao.msan.cn";
+settings.SITE_NAME_CN = "航空意外互助计划";
+
 settings.rpc = {
     host: process.env.RPC_HOST || "localhost",
     port: process.env.RPC_PORT || 8545
@@ -11,6 +16,17 @@ settings.avgBlockTime = 15;
 
 settings.wechatAuthFileName = "MP_verify_KnjeC1ANoqDsJ4kl.txt";
 settings.wechatAuthFileValue = "KnjeC1ANoqDsJ4kl";
+
+settings.WECHAT_APP_ID = "wx31383e8595a69546";
+settings.WECHAT_APP_SECRET = "7106526f34b3ae368333a939823d34e0";
+settings.WECHAT_MCH_ID = "1218330301";
+settings.WECHAT_API_KEY = "h65koq6484x6pdoqm3kjnjidsnsk2659";
+
+settings.WECHAT_OPEN_APP_ID = "";
+settings.WECHAT_OPEN_MCH_ID = "";
+settings.WECHAT_OPEN_API_KEY = "";
+
+settings.WXPAY_NOTIFY_URL = "http://" + settings.MAIN_HOST + "/wxpay/notify";
 
 if(process.env.NETWORK == "testnet"){
     settings.dbURL = "mongodb://testnetmadaodbadmin:Moshi314@123.56.90.147:37017/testnetmadao";

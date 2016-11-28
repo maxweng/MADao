@@ -2,6 +2,6 @@
 .idea
 .project
 .node-xmlhttprequest-sync-*
-npm-debug.log
+npm-debug*
 node_modules
 !.gitkeep

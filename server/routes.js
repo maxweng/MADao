@@ -27,6 +27,7 @@ exports = module.exports = function(app) {
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
     
+    app.use(middlewares.context_processor);
     app.use(middlewares.set_user);
     
     app.set('port', process.env.PORT || 8000);
@@ -50,5 +51,17 @@ exports = module.exports = function(app) {
     app.all('/api/me', middlewares.login_required, routes.api.me);
     app.post('/api/wechatlogin', middlewares.check_wechat_oauth, routes.api.wechatlogin);
     
+    app.all('/api/wechat/mpapi/access_token', routes.api.mpapis.mpapi_access_token_handler);
+    app.all('/api/wechat/mpapi/refresh_token', routes.api.mpapis.mpapi_refresh_token_handler);
+    app.all('/api/wechat/mpapi/userinfo', routes.api.mpapis.mpapi_userinfo_handler);
+    
+    if(settings.DEBUG){
+        app.get('/wechattest', function(req, res) {
+            res.render("wechattest", {});
+        });
+    }
+    
     app.get('/api/coinprice', routes.api.coinprice);
+    
+    app.all('/wxpay/notify', routes.api.wxpaynotify);
 };

@@ -1,7 +1,10 @@
+var request = require("request");
+var querystring = require('querystring');
+
 exports = module.exports = function(req, res, next){
     payload = {
-        'access_token': req.query.access_token,
-        'openid': req.query.openid,
+        'access_token': req.query.access_token || "",
+        'openid': req.query.openid || "",
         'lang': req.query.lang || "zh_CN",
     };
     request.get(

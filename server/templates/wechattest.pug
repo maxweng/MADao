@@ -3,23 +3,32 @@ html
         meta(name='viewport', content='width=device-width, initial-scale=1.0,user-scalable=no', charset='utf-8')
         title Wechat Test
     body
-        button#show_login_url show login url
+        button#show_login_url show wechat login url
         br
         #display_login_url
-        button#login login
+        button#login wechat login
         br
-        button#logout logout
+        button#logout wechat logout
         br
-        button#show_user_info show user info
+        button#show_user_info show wechat user info
         br
         #display_user_info
-        button#show_oauthData show oauthData
+        button#show_oauthData show wechat oauthData
         br
         #display_oauthData
-        button#show_islogin show isLogin
+        button#show_islogin show wechat isLogin
         br
         #display_islogin
-        button#show_code show code
+        button#show_code show wechat code
+        br
+        br
+        button#sys_login login
+        br
+        button#sys_logout logout
+        br
+        button#show_sys_user_info show user info
+        br
+        #display_sys_user_info
         br
         script(src=`/static/wechat/wechat_oauth_sdk.js?appkey=${WECHAT_APP_ID}&debug=true&_=0.1`, type='text/javascript', charset='utf-8')
         script(src='http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js', type='text/javascript')
@@ -33,7 +42,7 @@ html
                 });
                 $("#logout").click(function(e){
                     WXOauth.logout();
-                    alert("Logout!");
+                    alert("Wechat Logout!");
                 });
                 $("#show_user_info").click(function(e){
                     if(WXOauth.isLogin()){
@@ -54,5 +63,31 @@ html
                 });
                 $("#show_code").click(function(e){
                     alert(location.href);
+                });
+
+                $("#sys_login").click(function(e){
+                    if(WXOauth.isLogin()){
+                        $.post("/api/wechatlogin?access_token=" + WXOauth.oauthData.access_token + "&openid=" + WXOauth.oauthData.openid, function( data ) {
+                            alert("Login!");
+                        }).fail(function(response) {
+                            alert('Error: ' + response.responseText);
+                        });
+                    }else{
+                        WXOauth.login(undefined, undefined, false);
+                    }
+                });
+                $("#sys_logout").click(function(e){
+                    $.post("/api/logout", function( data ) {
+                        alert("Logout!");
+                    }).fail(function(response) {
+                        alert('Error: ' + response.responseText);
+                    });
+                });
+                $("#show_sys_user_info").click(function(e){
+                    $.get("/api/me", function(data){
+                        $("#display_sys_user_info").html(JSON.stringify(data));
+                    }).fail(function(response) {
+                        alert('Error: ' + response.responseText);
+                    });
                 });
             });

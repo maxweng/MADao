@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 var path = require('path');
+var fs = require('fs');
 var boot = require('./boot');
+var settings = require('../settings');
 
 var express = require('express');
 var http = require('http');
@@ -21,6 +23,7 @@ boot(function(){
     var server = http.createServer(app);
     
     server.listen(app.get('port'), function() { 
+        fs.writeFileSync(path.resolve(settings.BASE_DIR, '.pid'), process.pid);
         console.log((new Date()) + " Server is listening on port " + app.get('port'));
     });
 });

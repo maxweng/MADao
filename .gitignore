@@ -2,6 +2,7 @@
 .idea
 .project
 .node-xmlhttprequest-sync-*
+.pid
 npm-debug*
 node_modules
 wechatcerts

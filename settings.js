@@ -10,6 +10,8 @@ settings.DEBUG = true;
 settings.MAIN_HOST = "devmadao.msan.cn";
 settings.SITE_NAME_CN = "航空意外互助计划";
 
+settings.BASE_DIR = __dirname;
+
 settings.rpc = {
     host: process.env.RPC_HOST || "localhost",
     port: process.env.RPC_PORT || 8545

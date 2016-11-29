@@ -17,8 +17,7 @@ exports = module.exports = function (req, res) {
             "</xml>"
         ].join("\n"));
     }
-    console.log(req);
     console.log(req.body);
-    console.log(notify_verify(req.body));
+    console.log(utils.wxpay.notify_verify(req.body));
     return return_fail();
 }

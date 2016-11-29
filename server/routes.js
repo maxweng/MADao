@@ -23,9 +23,10 @@ exports = module.exports = function(app) {
         },
         store: new MongoStore({mongooseConnection: mongoose.connection, ttl: 3600 * 24 * 365 * 10})
     }));
-    
+
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(bodyParser.json());
+    app.use(middlewares.xml_body_parser);
     
     app.use(middlewares.context_processor);
     app.use(middlewares.set_user);
@@ -64,7 +65,7 @@ exports = module.exports = function(app) {
     app.get('/api/coinprice', routes.api.coinprice);
     
     app.all('/api/coinorders', middlewares.login_required, routes.api.coinorders);
-    app.post('/api/coinordergetunifiedorder', middlewares.check_wechat_oauth, middlewares.login_required, routes.api.coinordergetunifiedorder);
+    app.post('/api/coinordergetpayparams', middlewares.check_wechat_oauth, middlewares.login_required, routes.api.coinordergetpayparams);
     
     app.all('/wxpay/notify', routes.api.wxpaynotify);
 };

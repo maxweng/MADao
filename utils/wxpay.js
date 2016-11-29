@@ -29,8 +29,7 @@ var params_filter = function(params, except_keys){
 }
 
 var notify_verify = function(post_data){
-    post_data = JSON.parse(parser.toJson(post_data)).xml;
-    if (post_data.result_code.lower() != "success") return false;
+    if (post_data.result_code.toUpperCase() != "SUCCESS") return false;
     
     var trade_type = post_data.trade_type;
     
@@ -92,11 +91,6 @@ var getUnifiedOrder = function(trade_type, out_trade_no, total_fee, body, spbill
     }
     append_res("sign", sign);
     var data = "<xml>\n" + res.join("\n") + "\n</xml>";
-    console.log({
-                cert: settings.WECHAT_CERTS_CERT,
-                key: settings.WECHAT_CERTS_KEY,
-                ca: settings.WECHAT_CERTS_CA,
-            })
     request.post({
             url: UNIFIEDORDER_URL,
             body: data,
@@ -114,5 +108,8 @@ var getUnifiedOrder = function(trade_type, out_trade_no, total_fee, body, spbill
 }
 
 exports = module.exports = {
+    build_mysign: build_mysign,
+    params_filter: params_filter,
+    notify_verify: notify_verify,
     getUnifiedOrder: getUnifiedOrder
 };

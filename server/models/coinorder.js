@@ -6,6 +6,8 @@ var utils = require('../../utils');
 var web3 = utils.web3;
 var settings = require('../../settings');
 
+var PAYMENT_IDENTIFY_CODE = "11";
+
 var coinOrderSchema = new mongoose.Schema({
     out_trade_no: { type: String, unique: true },
     payment_id: { type: String },
@@ -30,6 +32,14 @@ coinOrderSchema.virtual('transactionIndex').get(function () {
     if(!trans) return null;
     return trans.transactionIndex;
 });
+
+coinOrderSchema.methods.paymentSuccess = function(cb){
+    if(typeof(cb) === "undefined") cb = function(){};
+    var self = this;
+    if(self.status != 0) return cb(new Error("status invalid"));
+    self.status = 2;
+    self.save(cb);
+}
 
 coinOrderSchema.methods.getUnifiedOrder = function(openid, cb){
     if(typeof(cb) === "undefined") cb = function(){};
@@ -56,7 +66,7 @@ coinOrderSchema.statics.create = function(user, address, coin, cb){
         coinOrder.coin = coin;
         coinOrder.coin_price = coin_price;
         coinOrder.price = price;
-        coinOrder.out_trade_no = (""+Date.now()) + (""+Math.ceil(Math.random() * 9000 + 1000));
+        coinOrder.out_trade_no = PAYMENT_IDENTIFY_CODE + (""+Date.now()) + (""+Math.ceil(Math.random() * 9000 + 1000));
         coinOrder.save(function(err){
             if(err) return cb(err);
             cb(null, coinOrder);
@@ -68,3 +78,4 @@ coinOrderSchema.plugin(mongoosePaginate);
 coinOrderSchema.plugin(uniqueValidator);
 
 var CoinOrder = mongoose.model('CoinOrder', coinOrderSchema);
+CoinOrder.PAYMENT_IDENTIFY_CODE = PAYMENT_IDENTIFY_CODE;

@@ -63,5 +63,8 @@ exports = module.exports = function(app) {
     
     app.get('/api/coinprice', routes.api.coinprice);
     
+    app.all('/api/coinorders', middlewares.login_required, routes.api.coinorders);
+    app.post('/api/coinordergetunifiedorder', middlewares.check_wechat_oauth, middlewares.login_required, routes.api.coinordergetunifiedorder);
+    
     app.all('/wxpay/notify', routes.api.wxpaynotify);
 };

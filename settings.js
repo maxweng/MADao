@@ -1,3 +1,6 @@
+var fs = require("fs");
+var path = require("path");
+
 var settings = {};
 
 settings.secret = "fk3nqqa8ftiij5dgls16";
@@ -21,6 +24,16 @@ settings.WECHAT_APP_ID = "wx31383e8595a69546";
 settings.WECHAT_APP_SECRET = "7106526f34b3ae368333a939823d34e0";
 settings.WECHAT_MCH_ID = "1218330301";
 settings.WECHAT_API_KEY = "h65koq6484x6pdoqm3kjnjidsnsk2659";
+
+try{
+    settings.WECHAT_CERTS_CERT = fs.readFileSync(path.resolve(__dirname, 'wechatcerts/apiclient_cert.pem'));
+    settings.WECHAT_CERTS_KEY = fs.readFileSync(path.resolve(__dirname, 'wechatcerts/apiclient_key.pem'));
+    settings.WECHAT_CERTS_CA = fs.readFileSync(path.resolve(__dirname, 'wechatcerts/rootca.pem'));
+}catch(e){
+    settings.WECHAT_CERTS_CERT = "";
+    settings.WECHAT_CERTS_KEY = "";
+    settings.WECHAT_CERTS_CA = "";
+}
 
 settings.WECHAT_OPEN_APP_ID = "";
 settings.WECHAT_OPEN_MCH_ID = "";

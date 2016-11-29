@@ -29,7 +29,7 @@ var params_filter = function(params, except_keys){
 }
 
 var notify_verify = function(post_data){
-    post_data = parser.toJson(post_data).xml;
+    post_data = JSON.parse(parser.toJson(post_data)).xml;
     if (post_data.result_code.lower() != "success") return false;
     
     var trade_type = post_data.trade_type;
@@ -92,14 +92,22 @@ var getUnifiedOrder = function(trade_type, out_trade_no, total_fee, body, spbill
     }
     append_res("sign", sign);
     var data = "<xml>\n" + res.join("\n") + "\n</xml>";
+    console.log({
+                cert: settings.WECHAT_CERTS_CERT,
+                key: settings.WECHAT_CERTS_KEY,
+                ca: settings.WECHAT_CERTS_CA,
+            })
     request.post({
             url: UNIFIEDORDER_URL,
-            body: data
+            body: data,
+            cert: settings.WECHAT_CERTS_CERT,
+            key: settings.WECHAT_CERTS_KEY,
+            ca: settings.WECHAT_CERTS_CA,
         },
         function (error, response, body) {
             if(error) return cb(error);
             if(response.statusCode != 200) return cb(new Error("status code: ") + response.statusCode);
-            var res = parser.toJson(body).xml;
+            var res = JSON.parse(parser.toJson(body)).xml;
             cb(null, res);
         }
     );

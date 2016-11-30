@@ -10,6 +10,7 @@ var PAYMENT_IDENTIFY_CODE = "11";
 
 var coinOrderSchema = new mongoose.Schema({
     out_trade_no: { type: String, unique: true },
+    payment_type: { type: String },
     payment_id: { type: String },
     transaction_id: { type: String },
     
@@ -33,12 +34,44 @@ coinOrderSchema.virtual('transactionIndex').get(function () {
     return trans.transactionIndex;
 });
 
-coinOrderSchema.methods.paymentSuccess = function(cb){
+coinOrderSchema.methods.paymentSuccess = function(payment_type, payment_id, cb){
     if(typeof(cb) === "undefined") cb = function(){};
     var self = this;
     if(self.status != 0) return cb(new Error("status invalid"));
+    self.payment_type = payment_type;
+    self.payment_id = payment_id;
     self.status = 2;
     self.save(cb);
+}
+
+coinOrderSchema.methods.fail = function(cb){
+    if(typeof(cb) === "undefined") cb = function(){};
+    var self = this;
+    if([0, 2, 4].indexOf(self.status) != -1){
+        var doFail = function(){
+            self.status = 8;
+            self.save(cb);
+        }
+        if(self.payment_type && self.payment_id){
+            var model = utils.models.getModelByAttr("PAYMENT_TYPE", self.payment_type);
+            if(model){
+                model.findOne()
+                    .where("payment_id").equals(self.payment_id)
+                    .exec(function(err, instance){
+                        if(instance){
+                            instance.refund();
+                        }
+                        return doFail();
+                    });
+            }else{
+                return doFail();
+            }
+        }else{
+            return doFail();
+        }
+    }else{
+        return cb(new Error("status invalid"));
+    }
 }
 
 coinOrderSchema.methods.getUnifiedOrder = function(openid, cb){

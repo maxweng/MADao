@@ -5,6 +5,7 @@ var parser = require('xml2json');
 var md5 = require("./md5");
 
 var UNIFIEDORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+var REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
 var build_mysign = function(prestr, key){
     return md5(prestr + "&key=" + key).toUpperCase();
@@ -107,9 +108,50 @@ var getUnifiedOrder = function(trade_type, out_trade_no, total_fee, body, spbill
     );
 }
 
+var refund = function(out_trade_no, transaction_id, out_refund_no, total_fee, refund_fee, cb){
+    // out_trade_no and transaction_id only need one
+    var res = [];
+    var params = {};
+    var append_res = function(key, value){
+        res.push("    <" + key + ">" + value + "</" + key + ">");
+        params[key] = value;
+    }
+    append_res("appid", settings.WECHAT_APP_ID);
+    append_res("mch_id", settings.WECHAT_MCH_ID);
+    append_res("nonce_str", randomstring.generate({
+      length: 12,
+      charset: 'abcdefghijklmnopqrstuvwxyz0123456789'
+    }));
+    append_res("op_user_id", settings.WECHAT_MCH_ID);
+    append_res("out_refund_no", out_refund_no);
+    append_res("out_trade_no", out_trade_no);
+    append_res("refund_fee", refund_fee);
+    append_res("total_fee", total_fee);
+    append_res("transaction_id", transaction_id);
+    var [_, prestr] = params_filter(params);
+    var sign = build_mysign(prestr, settings.WECHAT_API_KEY);
+    append_res("sign", sign);
+    var data = "<xml>\n" + res.join("\n") + "\n</xml>";
+    request.post({
+            url: REFUND_URL,
+            body: data,
+            cert: settings.WECHAT_CERTS_CERT,
+            key: settings.WECHAT_CERTS_KEY,
+            ca: settings.WECHAT_CERTS_CA,
+        },
+        function (error, response, body) {
+            if(error) return cb(error);
+            if(response.statusCode != 200) return cb(new Error("status code: ") + response.statusCode);
+            var res = JSON.parse(parser.toJson(body)).xml;
+            cb(null, res);
+        }
+    );
+}
+
 exports = module.exports = {
     build_mysign: build_mysign,
     params_filter: params_filter,
     notify_verify: notify_verify,
-    getUnifiedOrder: getUnifiedOrder
+    getUnifiedOrder: getUnifiedOrder,
+    refund: refund
 };

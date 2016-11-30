@@ -19,6 +19,11 @@ settings.rpc = {
 
 settings.avgBlockTime = 15;
 
+settings.DEFAULT_GAS = 1000000;
+settings.DEFAULT_GAS_PRICE = 20000000000;
+
+settings.VERIFY_BLOCK_NUMBER = 2;
+
 settings.wechatAuthFileName = "MP_verify_KnjeC1ANoqDsJ4kl.txt";
 settings.wechatAuthFileValue = "KnjeC1ANoqDsJ4kl";
 

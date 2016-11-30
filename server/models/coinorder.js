@@ -27,9 +27,13 @@ var coinOrderSchema = new mongoose.Schema({
     timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
 });
 
-coinOrderSchema.virtual('transactionIndex').get(function () {
+coinOrderSchema.virtual('transaction').get(function () {
     if(!this.transaction_id) return null;
-    var trans = web3.eth.getTransaction(this.transaction_id);
+    return web3.eth.getTransaction(this.transaction_id);
+});
+
+coinOrderSchema.virtual('transactionIndex').get(function () {
+    var trans = this.transaction;
     if(!trans) return null;
     return trans.transactionIndex;
 });
@@ -41,7 +45,32 @@ coinOrderSchema.methods.paymentSuccess = function(payment_type, payment_id, cb){
     self.payment_type = payment_type;
     self.payment_id = payment_id;
     self.status = 2;
-    self.save(cb);
+    self.save(function(err){
+        if(err) return cb(err);
+        cb(null);
+        self.sendCoin();
+    });
+}
+
+coinOrderSchema.methods.checkTransaction = function(cb){
+    if(typeof(cb) === "undefined") cb = function(){};
+    var self = this;
+    if([4, ].indexOf(self.status) != -1){
+        var trans = self.transaction;
+        if(trans.transactionIndex == null) return cb(null);
+        if(trans.transactionIndex == 0){
+            if(web3.eth.blockNumber - trans.blockNumber >= settings.VERIFY_BLOCK_NUMBER){
+                self.status = 6;
+                self.save(cb);
+            }else{
+                cb(null);
+            }
+        }else{
+            trans.fail(cb);
+        }
+    }else{
+        cb(null);
+    }
 }
 
 coinOrderSchema.methods.check = function(cb){
@@ -65,9 +94,24 @@ coinOrderSchema.methods.sendCoin = function(cb){
     var self = this;
     self.check(function(err, canSend){
         if(!canSend) return cb(new Error("can not send coin"));
-        
-        
-        
+        web3.eth.sendTransaction({
+                from: settings.sysAccountAddress,
+                to: self.address,
+                value: web3.toWei(self.coin, "ether"),
+                gas: settings.DEFAULT_GAS,
+                gasPrice: settings.DEFAULT_GAS_PRICE,
+            }, function(err, transaction_id){
+                if(err){
+                    console.log(err);
+                    self.fail(function(){
+                        cb(err);
+                    });
+                    return false;
+                }
+                self.status = 4;
+                self.transaction_id = transaction_id;
+                self.save(cb);
+        });
     });
 }
 
@@ -141,6 +185,17 @@ coinOrderSchema.statics.autoFail = function(){
             if(err) return false;
             for(var i=0; i<instances.length; i++){
                 instances[i].check();
+            }
+        });
+}
+
+coinOrderSchema.statics.autoCheckTransaction = function(){
+    CoinOrder.find()
+        .where("status").equals(4)
+        .exec(function(err, instances){
+            if(err) return false;
+            for(var i=0; i<instances.length; i++){
+                instances[i].checkTransaction();
             }
         });
 }

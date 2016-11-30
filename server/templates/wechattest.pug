@@ -34,6 +34,11 @@ html
         button#buy_coin buy 0.002 coin
         br
         #display_buy_coin
+        br
+        input#out_trade_no(type="text")
+        button#show_coin_order show coin order
+        br
+        #display_coin_order
         script(src=`/static/wechat/wechat_oauth_sdk.js?appkey=${WECHAT_APP_ID}&debug=true&_=0.1`, type='text/javascript', charset='utf-8')
         script(src='http://lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js', type='text/javascript')
         script.
@@ -94,11 +99,12 @@ html
                         alert('Error: ' + response.responseText);
                     });
                 });
-
+                
                 $("#buy_coin").click(function(e){
                     if(WXOauth.isLogin()){
                         $.post("/api/coinorders", {"coin": 0.002}, function(data){
                             var out_trade_no = data.out_trade_no;
+                            $("#out_trade_no").val(out_trade_no);
                             $.post("/api/coinordergetpayparams?access_token=" + WXOauth.oauthData.access_token + "&openid=" + WXOauth.oauthData.openid + "&out_trade_no=" + out_trade_no, function(data){
                                 $("#display_buy_coin").html(JSON.stringify(data));
                                 var onBridgeReady = function(){
@@ -132,5 +138,10 @@ html
                     }else{
                         WXOauth.login(undefined, undefined, false);
                     }
+                });
+                $("#show_coin_order").click(function(e){
+                    $.get("/api/coinorders?out_trade_no=" + $("#out_trade_no").val(), function(data){
+                        $("#display_coin_order").html(JSON.stringify(data));
+                    });
                 });
             });

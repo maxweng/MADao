@@ -44,6 +44,33 @@ coinOrderSchema.methods.paymentSuccess = function(payment_type, payment_id, cb){
     self.save(cb);
 }
 
+coinOrderSchema.methods.check = function(cb){
+    if(typeof(cb) === "undefined") cb = function(){};
+    var self = this;
+    if([6, 8].indexOf(self.status) == -1){
+        if(Date.now() - (+self.createdAt) > 1000 * 60 * 15){
+            self.fail(function(err){
+                cb(err, false);
+            });
+        }else{
+            cb(null, true);
+        }
+    }else{
+        cb(null, true);
+    }
+}
+
+coinOrderSchema.methods.sendCoin = function(cb){
+    if(typeof(cb) === "undefined") cb = function(){};
+    var self = this;
+    self.check(function(err, canSend){
+        if(!canSend) return cb(new Error("can not send coin"));
+        
+        
+        
+    });
+}
+
 coinOrderSchema.methods.fail = function(cb){
     if(typeof(cb) === "undefined") cb = function(){};
     var self = this;
@@ -105,6 +132,17 @@ coinOrderSchema.statics.create = function(user, address, coin, cb){
             cb(null, coinOrder);
         });
     });
+}
+
+coinOrderSchema.statics.autoFail = function(){
+    CoinOrder.find()
+        .where("status").nin([6, 8])
+        .exec(function(err, instances){
+            if(err) return false;
+            for(var i=0; i<instances.length; i++){
+                instances[i].check();
+            }
+        });
 }
 
 coinOrderSchema.plugin(mongoosePaginate);

@@ -23,8 +23,8 @@ contract usingOracleIt {
     }
 
     function oracleItSetNetwork() internal returns(bool){
-        if (getCodeSize(0x6481db6d2ed9d720bdf66174ee8e2b7d05b1f13c)>0){
-            OIAR = OracleItAddrResolverI(0x6481db6d2ed9d720bdf66174ee8e2b7d05b1f13c);
+        if (getCodeSize(0x878101bd3ee632b6d46005d98262d482a070f631)>0){
+            OIAR = OracleItAddrResolverI(0x878101bd3ee632b6d46005d98262d482a070f631);
             return true;
         }
         return false;

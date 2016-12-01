@@ -325,13 +325,13 @@ var Web3 = require("web3");
   "3": {
     "abi": [],
     "unlinked_binary": "0x606060405260068060106000396000f3606060405200",
-    "updated_at": 1479891440482,
+    "updated_at": 1480578618116,
     "links": {}
   },
   "default": {
     "abi": [],
     "unlinked_binary": "0x606060405260068060106000396000f3606060405200",
-    "updated_at": 1479891258598
+    "updated_at": 1480578390133
   }
 };
 

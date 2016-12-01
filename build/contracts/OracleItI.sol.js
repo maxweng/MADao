@@ -415,7 +415,7 @@ var Web3 = require("web3");
         "type": "function"
       }
     ],
-    "updated_at": 1479891440471,
+    "updated_at": 1480578618105,
     "links": {}
   },
   "default": {
@@ -511,7 +511,7 @@ var Web3 = require("web3");
         "type": "function"
       }
     ],
-    "updated_at": 1479891258598
+    "updated_at": 1480578390130
   }
 };
 

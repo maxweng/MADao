@@ -75,7 +75,6 @@ function getEthCall(txobj, gethRPC) {
 
 exports = module.exports = function(req, res) {
     var data = req.body;
-    console.log(data)
 
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

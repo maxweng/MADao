@@ -218,7 +218,7 @@ contract MDC is usingOracleIt, usingUtils {
         }
     }
     
-    function uintToBytes(uint v) constant returns (bytes32 ret) {
+    function uintToBytes(uint v) constant internal returns (bytes32 ret) {
         if (v == 0) {
             ret = '0';
         }
@@ -232,7 +232,7 @@ contract MDC is usingOracleIt, usingUtils {
         return ret;
     }
     
-    function bytes32ToString(bytes32 x) constant returns (string) {
+    function bytes32ToString(bytes32 x) constant internal returns (string) {
         bytes memory bytesString = new bytes(32);
         uint charCount = 0;
         for (uint j = 0; j < 32; j++) {

@@ -213,7 +213,7 @@ module.exports = function (callback) {
         }
         console.log("Claimer Address: ", user.account);
         console.log("Recommender Address: ", user.recommender);
-        mdc.signUp(user.recommender, user.name, user.country, user.id, user.noncestr, { from: user.account, value: web3.toWei(1, "ether") }).then(function (transactionId) {
+        mdc.signUp(user.recommender, user.name, user.country, user.id, user.noncestr, { from: user.account, value: web3.toWei(1, "ether"), gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -243,7 +243,7 @@ module.exports = function (callback) {
                 }
             }
         }
-        mdc.addFlight(userFlight.flight.flightNumber, userFlight.flight.departureTime, { from: userFlight.user.account }).then(function (transactionId) {
+        mdc.addFlight(userFlight.flight.flightNumber, userFlight.flight.departureTime, { from: userFlight.user.account, gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
             console.log('Add flight transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -273,7 +273,7 @@ module.exports = function (callback) {
                 }
             }
         }
-        mdc.claim(userFlight.flight.flightNumber, userFlight.flight.departureTime, userFlight.user.name, userFlight.user.country, userFlight.user.id, userFlight.user.noncestr, { from: userFlight.user.account }).then(function (transactionId) {
+        mdc.claim(userFlight.flight.flightNumber, userFlight.flight.departureTime, userFlight.user.name, userFlight.user.country, userFlight.user.id, userFlight.user.noncestr, { from: userFlight.user.account, gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
             console.log('Claim transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){

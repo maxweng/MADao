@@ -51,6 +51,18 @@ function getTransactionData(addr, gethRPC) {
     return data;    
 }
 
+function getTransaction(transactionId, gethRPC) {
+    var data = utils.response.getDefaultResponse();
+    try {
+        data["data"] = web3.eth.getTransaction(transactionId)
+    } catch (e) {
+        console.log(e);
+        data["error"] = true;
+        data["msg"] = e.toString();
+    }
+    return data;    
+}
+
 function getEstimatedGas(txobj, gethRPC) {
     var data = utils.response.getDefaultResponse();
     try {
@@ -90,6 +102,10 @@ exports = module.exports = function(req, res) {
         res.end();
     } else if ("txdata" in data) {
         var jsonRes = getTransactionData(data["txdata"]);
+        res.write(JSON.stringify(jsonRes));
+        res.end();
+    } else if ("txId" in data) {
+        var jsonRes = getTransaction(data["txId"]);
         res.write(JSON.stringify(jsonRes));
         res.end();
     } else if ("estimatedGas" in data) {

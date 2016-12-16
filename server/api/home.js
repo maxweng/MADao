@@ -48,7 +48,7 @@ function getTransactionData(addr, gethRPC) {
         data["error"] = true;
         data["msg"] = e.toString();
     }
-    return data;    
+    return data;
 }
 
 function getTransaction(transactionId, gethRPC) {
@@ -60,7 +60,7 @@ function getTransaction(transactionId, gethRPC) {
         data["error"] = true;
         data["msg"] = e.toString();
     }
-    return data;    
+    return data;
 }
 
 function getEstimatedGas(txobj, gethRPC) {
@@ -71,7 +71,7 @@ function getEstimatedGas(txobj, gethRPC) {
         data["error"] = true;
         data["msg"] = e.toString();
     }
-    return data;    
+    return data;
 }
 
 function getEthCall(txobj, gethRPC) {
@@ -92,7 +92,7 @@ exports = module.exports = function(req, res) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header('Content-Type', 'application/json');
 
-    if ("balance" in data) {        
+    if ("balance" in data) {
         var jsonRes = getBalance(data["balance"]);
         res.write(JSON.stringify(jsonRes));
         res.end();

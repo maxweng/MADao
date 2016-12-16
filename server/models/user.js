@@ -11,6 +11,10 @@ var userSchema = new mongoose.Schema({
     header: { type: String, default: '' },
     wechat_openid: { type: String, default: '' },
     
+    real_name: { type: String, default: '' },
+    country: { type: String, default: '' },
+    id_no: { type: String, default: '' },
+    
     random_password: { type: Boolean, default: false },
     
     is_stuff: { type: Boolean, default: false },

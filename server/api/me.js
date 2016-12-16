@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 var User = mongoose.models.User;
 
 exports = module.exports = function (req, res) {
-    var editableFieldNames = ["address", "encrypted_wallet_key", "nickname", "header"];
+    var editableFieldNames = ["address", "encrypted_wallet_key", "nickname", "header", "real_name", "country", "id_no"];
     var readOnlyFieldNames = ["wechat_openid"];
     var fieldNames = editableFieldNames.concat(readOnlyFieldNames);
     var getResponse = function(){

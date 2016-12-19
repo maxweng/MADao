@@ -82134,7 +82134,11 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
                 alert(JSON.stringify(msg))
             });
         },function(err){
-
+            Wechat.loginWechat(function(){
+                console.log('登录成功')
+            },function(msg){
+                console.log(msg)
+            });
         })
 
         Coinprice.get().$promise.then(function(res){
@@ -82285,9 +82289,9 @@ function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorde
     $scope.data = {};
 
     var bayCoin = function(joinPrice){
+        if(!Wechat.hasAccessToken())Wechat.getAccessToken();
         Me.get().$promise.then(function(me){
             Coinorders.add({},{'coin':joinPrice}).$promise.then(function(data){
-                if(!Wechat.hasAccessToken())Wechat.getAccessToken();
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(data1){
                     var onBridgeReady = function(){
                        WeixinJSBridge.invoke(

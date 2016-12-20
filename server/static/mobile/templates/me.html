@@ -2,7 +2,7 @@
     <ion-nav-title>个人主页</ion-nav-title>
     <ion-nav-buttons side="right">
         <button class="button button-clear" ng-click="refresh(password)" ng-show="me.address&&me.encrypted_wallet_key&&showWalletInfo">刷新</button>
-        <button class="button button-clear" ng-click="unbindWallet()">解绑</button>
+        <!-- <button class="button button-clear" ng-click="unbindWallet()">解绑</button> -->
     </ion-nav-buttons>
     <ion-content class="me padding">
         <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&!showWalletInfo">

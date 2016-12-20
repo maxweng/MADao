@@ -82123,7 +82123,9 @@ function($scope,Ether,Me,tools,web3Provider){
 ionicApp
 .controller('meCtrl', ['$scope', '$state','Wallet','Me','globalFuncs',
 'Wechat','$http','Coinprice','Coinorders','Ether','web3Provider','ethUnits',
-function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders,Ether,web3Provider,ethUnits) {
+'Coinorders','Coinordergetpayparams',
+function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders,
+    Ether,web3Provider,ethUnits,Coinorders,Coinordergetpayparams) {
     $scope.$on('$ionicView.beforeEnter', function(){
         $scope.me = {};
         Me.get().$promise.then(function(res){
@@ -82216,61 +82218,49 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
             alert(JSON.stringify(msg));
         })
 	};
-}])
-;
 
-ionicApp.controller('productCtrl', ['$scope','Ether','ethFuncs','ethUnits','Wechat','Me','web3Provider','Coinprice',
-function($scope,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice){
-    $scope.$on('$ionicView.beforeEnter', function(){
-        Ether.getBalance({'balance':window.MDC.address,'isClassic':true}).$promise.then(function(res){
-            $scope.totalBalance = res.data.balance;
-        });
-
-        Coinprice.get().$promise.then(function(res){
-            $scope.advicedPrice = res.ethcny;
-        },function(msg){
-            console.log(msg)
-            alert(JSON.stringify(msg))
-        });
-
-        window.mdc.totalAvailableUserAddresses().then(function(res){
-            $scope.totalPeople = res.toNumber();
+    $scope.recharge = function(joinPrice){
+        if(!Wechat.hasAccessToken())Wechat.getAccessToken();
+        Me.get().$promise.then(function(me){
+            Coinorders.add({},{'coin':joinPrice}).$promise.then(function(data){
+                console.log(data)
+                Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(data1){
+                    console.log(data1)
+                    var onBridgeReady = function(){
+                       WeixinJSBridge.invoke(
+                           'getBrandWCPayRequest', data1, function(res){
+                               if(res.err_msg == "get_brand_wcpay_request:ok" ) {
+                                   alert("pay succeeded");
+                               }else{
+                                   alert("pay failed");
+                               }
+                           }
+                       );
+                    }
+                    if (typeof WeixinJSBridge == "undefined"){
+                       if( document.addEventListener ){
+                           document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+                       }else if (document.attachEvent){
+                           document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                           document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+                       }
+                    }else{
+                       onBridgeReady();
+                    }
+                },function(msg){
+                    alert(JSON.stringify(msg))
+                })
+            },function(msg){
+                alert(JSON.stringify(msg))
+            });
+        },function(err){
+            Wechat.loginWechat(function(){
+                console.log('登录成功')
+            },function(msg){
+                console.log(msg)
+            });
         })
-    });
-
-    $scope.views = {
-        'assistance':false,
-        'problem':false
     }
-
-    // var wallet = '0x4db091998c8a6530c312211113844b34968fffb3';
-    // var privateKey = 'f0003dcea6610badbe043593e37ec4c2860f6acd29338626eb9e142992b9c250';
-    // web3Provider.init(wallet,privateKey);
-
-    // var getData = function(){
-    //     Ether.getTransactionData({'txdata':wallet,'isClassic':true}).$promise.then(function(data){
-    //         console.log('transactionData:')
-    //         console.log(data)
-    //         var rawTx = {
-    // 			nonce: ethFuncs.sanitizeHex(data.data.nonce),
-    // 			gasPrice: ethFuncs.sanitizeHex(ethFuncs.addTinyMoreToGas(data.data.gasprice)),
-    // 			gasLimit: ethFuncs.sanitizeHex(ethFuncs.decimalToHex(1000000)),
-    // 			to: ethFuncs.sanitizeHex(address),
-    // 			value: ethFuncs.sanitizeHex(ethFuncs.decimalToHex(ethUnits.toWei(0, 'wei'))),
-    // 			data: ethFuncs.sanitizeHex(window.ethUtil.sha3('totalAvailableUserAddresses').toString('hex').slice(0, 8))
-    // 		}
-    //         var eTx = new window.ethUtil.Tx(rawTx);
-    //         eTx.sign(new BufferObject.Buffer(privateKey, 'hex'));
-    // 		$scope.signedTx = '0x' + eTx.serialize().toString('hex');
-    //         Ether.sendRawTx({'rawtx':$scope.signedTx,'isClassic':true}).$promise.then(function(res){
-    //             console.log('Tx:')
-    //             console.log(res)
-    //             Ether.getTransactionData({'txdata':res.data,'isClassic':true}).$promise.then(function(d){
-    //                 console.log(d)
-    //             });
-    //         })
-    //     })
-    // }
 }])
 ;
 
@@ -82384,6 +82374,61 @@ function($scope,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,Coinorde
 
         })
     }
+}])
+;
+
+ionicApp.controller('productCtrl', ['$scope','Ether','ethFuncs','ethUnits','Wechat','Me','web3Provider','Coinprice',
+function($scope,Ether,ethFuncs,ethUnits,Wechat,Me,web3Provider,Coinprice){
+    $scope.$on('$ionicView.beforeEnter', function(){
+        Ether.getBalance({'balance':window.MDC.address,'isClassic':true}).$promise.then(function(res){
+            $scope.totalBalance = res.data.balance;
+        });
+
+        Coinprice.get().$promise.then(function(res){
+            $scope.advicedPrice = res.ethcny;
+        },function(msg){
+            console.log(msg)
+            alert(JSON.stringify(msg))
+        });
+
+        window.mdc.totalAvailableUserAddresses().then(function(res){
+            $scope.totalPeople = res.toNumber();
+        })
+    });
+
+    $scope.views = {
+        'assistance':false,
+        'problem':false
+    }
+
+    // var wallet = '0x4db091998c8a6530c312211113844b34968fffb3';
+    // var privateKey = 'f0003dcea6610badbe043593e37ec4c2860f6acd29338626eb9e142992b9c250';
+    // web3Provider.init(wallet,privateKey);
+
+    // var getData = function(){
+    //     Ether.getTransactionData({'txdata':wallet,'isClassic':true}).$promise.then(function(data){
+    //         console.log('transactionData:')
+    //         console.log(data)
+    //         var rawTx = {
+    // 			nonce: ethFuncs.sanitizeHex(data.data.nonce),
+    // 			gasPrice: ethFuncs.sanitizeHex(ethFuncs.addTinyMoreToGas(data.data.gasprice)),
+    // 			gasLimit: ethFuncs.sanitizeHex(ethFuncs.decimalToHex(1000000)),
+    // 			to: ethFuncs.sanitizeHex(address),
+    // 			value: ethFuncs.sanitizeHex(ethFuncs.decimalToHex(ethUnits.toWei(0, 'wei'))),
+    // 			data: ethFuncs.sanitizeHex(window.ethUtil.sha3('totalAvailableUserAddresses').toString('hex').slice(0, 8))
+    // 		}
+    //         var eTx = new window.ethUtil.Tx(rawTx);
+    //         eTx.sign(new BufferObject.Buffer(privateKey, 'hex'));
+    // 		$scope.signedTx = '0x' + eTx.serialize().toString('hex');
+    //         Ether.sendRawTx({'rawtx':$scope.signedTx,'isClassic':true}).$promise.then(function(res){
+    //             console.log('Tx:')
+    //             console.log(res)
+    //             Ether.getTransactionData({'txdata':res.data,'isClassic':true}).$promise.then(function(d){
+    //                 console.log(d)
+    //             });
+    //         })
+    //     })
+    // }
 }])
 ;
 

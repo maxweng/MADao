@@ -32,12 +32,6 @@ coinOrderSchema.virtual('transaction').get(function () {
     return web3.eth.getTransaction(this.transaction_id);
 });
 
-coinOrderSchema.virtual('transactionIndex').get(function () {
-    var trans = this.transaction;
-    if(!trans) return null;
-    return trans.transactionIndex;
-});
-
 coinOrderSchema.methods.paymentSuccess = function(payment_type, payment_id, cb){
     if(typeof(cb) === "undefined") cb = function(){};
     var self = this;
@@ -58,15 +52,11 @@ coinOrderSchema.methods.checkTransaction = function(cb){
     if([4, ].indexOf(self.status) != -1){
         var trans = self.transaction;
         if(trans.transactionIndex == null) return cb(null);
-        if(trans.transactionIndex == 0){
-            if(web3.eth.blockNumber - trans.blockNumber >= settings.VERIFY_BLOCK_NUMBER){
-                self.status = 6;
-                self.save(cb);
-            }else{
-                cb(null);
-            }
+        if(web3.eth.blockNumber - trans.blockNumber >= settings.VERIFY_BLOCK_NUMBER){
+            self.status = 6;
+            self.save(cb);
         }else{
-            self.fail(cb);
+            cb(null);
         }
     }else{
         cb(null);

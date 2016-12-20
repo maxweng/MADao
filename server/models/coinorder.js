@@ -66,7 +66,7 @@ coinOrderSchema.methods.checkTransaction = function(cb){
                 cb(null);
             }
         }else{
-            trans.fail(cb);
+            self.fail(cb);
         }
     }else{
         cb(null);

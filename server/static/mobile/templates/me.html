@@ -13,8 +13,8 @@
         </div>
         <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&showWalletInfo">
             <div class="padding-top padding-bottom">钱包地址：{{wallet.address}}</div>
-            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | number:2}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
-            <div class="padding-top padding-bottom">互助计划余额：{{balance | number:2}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
+            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:2}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
+            <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:2}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
             <div>充值</div>
             <label class="item item-input">
                 <input type="number" placeholder="ETH个数" ng-model="eth">

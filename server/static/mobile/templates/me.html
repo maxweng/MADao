@@ -18,7 +18,7 @@
             <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:2}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
             <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:2}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
             <div>订单记录</div>
-            <div class="padding" ng-repeat="order in orders">
+            <div class="padding" ng-repeat="order in orders.docs">
                 <div>_id: {{order._id}}</div>
                 <div>address: {{order.address}}</div>
                 <div>coin: {{order.coin}}</div>
@@ -26,7 +26,7 @@
                 <div>createdAt: {{order.createdAt}}</div>
                 <div>out_trade_no: {{order.out_trade_no}}</div>
                 <div>price: {{order.price}}</div>
-                <div>status: {{order.15status}}</div>
+                <div>status: {{order.status}}</div>
                 <div>user_id: {{order.user_id}}</div>
                 <div>updatedAt: {{order.updatedAt}}</div>
             </div>

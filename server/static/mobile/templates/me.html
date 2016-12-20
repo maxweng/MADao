@@ -12,9 +12,28 @@
             <button class="button button-positive button-block" ng-click="decryptWallet(filePassword)">解锁</button>
         </div>
         <div class="list" ng-show="me.address&&me.encrypted_wallet_key&&showWalletInfo">
-            <div class="padding-top padding-bottom">钱包地址：{{wallet.address}}</div>
+            <div class="padding-top padding-bottom">钱包地址：
+                <input type="text" ng-model="wallet.address" readonly="true">
+            </div>
             <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:2}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
             <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:2}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
+            <div>订单记录</div>
+            <div class="padding" ng-repeat="order in orders">
+                <div>_id: {{order._id}}</div>
+                <div>address: {{order.address}}</div>
+                <div>coin: {{order.coin}}</div>
+                <div>coin_price: {{order.coin_price}}</div>
+                <div>createdAt: {{order.createdAt}}</div>
+                <div>out_trade_no: {{order.out_trade_no}}</div>
+                <div>price: {{order.price}}</div>
+                <div>status: {{order.15status}}</div>
+                <div>user_id: {{order.user_id}}</div>
+                <div>updatedAt: {{order.updatedAt}}</div>
+            </div>
+            <div class="button-bar">
+              <a class="button" ng-click="preOrder()">上一页</a>
+              <a class="button" ng-click="nextOrder()">下一页</a>
+            </div>
             <div>充值</div>
             <label class="item item-input">
                 <input type="number" placeholder="ETH个数" ng-model="eth">

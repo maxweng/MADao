@@ -63,7 +63,7 @@ contract MDC is usingOracleIt, usingUtils {
         if(recommender != address(0)){
             recommender_fee = msg.value * recommendationRewardRate / 100;
         }
-        uint user_fee = msg.value - recommender_fee;
+        uint user_fee = safeSub(msg.value, recommender_fee);
         if(user_fee + recommender_fee != msg.value) throw;
         
         if(user_fee < minUserAvailableBalance) throw;
@@ -90,11 +90,11 @@ contract MDC is usingOracleIt, usingUtils {
             if(!recommender.send(recommender_fee)) throw;
         }
         
-        balances[msg.sender] += user_fee;
+        balances[msg.sender] = safeAdd(balances[msg.sender], user_fee);
     }
     
     function minusBalance(address userAddress, uint price) internal {
-        balances[userAddress] -= price;
+        balances[userAddress] = safeSub(balances[userAddress], price);
         if(balances[userAddress] < minUserAvailableBalance){
             infoHashes[userAddress].available = false;
             totalAvailableUserAddresses--;

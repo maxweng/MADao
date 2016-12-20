@@ -61,7 +61,7 @@ contract MDC is usingOracleIt, usingUtils {
         
         uint recommender_fee = 0;
         if(recommender != address(0)){
-            recommender_fee = msg.value * recommendationRewardRate / 100;
+            recommender_fee = safeMul(msg.value, recommendationRewardRate) / 100;
         }
         uint user_fee = safeSub(msg.value, recommender_fee);
         if(user_fee + recommender_fee != msg.value) throw;
@@ -125,7 +125,7 @@ contract MDC is usingOracleIt, usingUtils {
     }
     
     function getClaimFee() oracleItAPI internal returns (uint claimFee) {
-        claimFee = oracleIt.getPrice("AirCrash") + defaultGasLimit * defaultGasPrice;
+        claimFee = oracleIt.getPrice("AirCrash") + safeMul(defaultGasLimit, defaultGasPrice);
     }
     
     function claimQuery(string queryNo, bytes32 _name, bytes32 _id ) internal returns (uint oracleItId) {

@@ -72838,15 +72838,7 @@ if(network_id=="1"){var possible_ids=["1","live","default"];for(var i=0;i<possib
 Object.keys(contract.events).forEach(function(topic){Contract.events[topic]=contract.events[topic];});return;}if((typeof name==="undefined"?"undefined":_typeof(name))=="object"){var obj=name;Object.keys(obj).forEach(function(name){var a=obj[name];Contract.link(name,a);});return;}Contract.links[name]=address;};Contract.contract_name=Contract.prototype.contract_name="MDC";Contract.generated_with=Contract.prototype.generated_with="3.2.0";// Allow people to opt-in to breaking changes now.
 Contract.next_gen=false;var properties={binary:function binary(){var binary=Contract.unlinked_binary;Object.keys(Contract.links).forEach(function(library_name){var library_address=Contract.links[library_name];var regex=new RegExp("__"+library_name+"_*","g");binary=binary.replace(regex,library_address.replace("0x",""));});return binary;}};Object.keys(properties).forEach(function(key){var getter=properties[key];var definition={};definition.enumerable=true;definition.configurable=false;definition.get=getter;Object.defineProperty(Contract,key,definition);Object.defineProperty(Contract.prototype,key,definition);});bootstrap(Contract);if(typeof module!="undefined"&&typeof module.exports!="undefined"){module.exports=Contract;}else{// There will only be one version of this contract in the browser,
 // and we can use that.
-window.MDC=Contract;}})();},{"web3":269,"web3/lib/web3/event.js":296}],3:[function(require,module,exports){'use strict';window.ethUtil=require('ethereumjs-util');ethUtil.crypto=require('crypto');ethUtil.scrypt=require('scryptsy');ethUtil.uuid=require('uuid');ethUtil.Tx=require('ethereumjs-tx');window.Web3=require('web3');window.BufferObject=require('buffer');window.MDC=require('./MDC.sol.js');window.HookedWeb3Provider=require('hooked-web3-provider');window.MBSProvider=require('./MBSProvider.js');window.ionicApp=angular.module('madaoClient',['ionic','ui.router','ngResource']).run(['Wechat','Me',function(Wechat,Me){Date.prototype.Format=function(fmt){//author: meizz
-var o={"M+":this.getMonth()+1,//月份
-"d+":this.getDate(),//日
-"h+":this.getHours(),//小时
-"m+":this.getMinutes(),//分
-"s+":this.getSeconds(),//秒
-"q+":Math.floor((this.getMonth()+3)/3),//季度
-"S":this.getMilliseconds()//毫秒
-};if(/(y+)/.test(fmt))fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length));for(var k in o){if(new RegExp("("+k+")").test(fmt))fmt=fmt.replace(RegExp.$1,RegExp.$1.length==1?o[k]:("00"+o[k]).substr((""+o[k]).length));}return fmt;};// Me.get().$promise.then(function(me){
+window.MDC=Contract;}})();},{"web3":269,"web3/lib/web3/event.js":296}],3:[function(require,module,exports){'use strict';window.ethUtil=require('ethereumjs-util');ethUtil.crypto=require('crypto');ethUtil.scrypt=require('scryptsy');ethUtil.uuid=require('uuid');ethUtil.Tx=require('ethereumjs-tx');window.Web3=require('web3');window.BufferObject=require('buffer');window.MDC=require('./MDC.sol.js');window.HookedWeb3Provider=require('hooked-web3-provider');window.MBSProvider=require('./MBSProvider.js');window.ionicApp=angular.module('madaoClient',['ionic','ui.router','ngResource']).run(['Wechat','Me',function(Wechat,Me){// Me.get().$promise.then(function(me){
 //
 // },function(err){
 //     Wechat.loginWechat(function(){
@@ -81176,6 +81168,27 @@ ionicApp.filter('claimStatus', [function(){
 
 ionicApp.filter('getDate', [function(){
     return function(date){
+        if (typeof Date.Format != 'function') {
+            Date.prototype.Format = function(fmt)
+            { //author: meizz
+              var o = {
+                "M+" : this.getMonth()+1,                 //月份
+                "d+" : this.getDate(),                    //日
+                "h+" : this.getHours(),                   //小时
+                "m+" : this.getMinutes(),                 //分
+                "s+" : this.getSeconds(),                 //秒
+                "q+" : Math.floor((this.getMonth()+3)/3), //季度
+                "S"  : this.getMilliseconds()             //毫秒
+              };
+              if(/(y+)/.test(fmt))
+                fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+              for(var k in o)
+                if(new RegExp("("+ k +")").test(fmt))
+              fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+              return fmt;
+            }
+        }
+
         return new Date(date).format("yyyy-MM-dd HH:mm");
     }
 }])
@@ -81979,8 +81992,8 @@ function($rootScope,APP_CONFIG){
 
     return {
         init: function(userAddress,userkey){
-            // userAddress = '0xb57be5149842f218a95da90599ba2b7a70f888e7';
-            // userkey = 'a8d9edff20ef6fd7000f43ec103904bdc173ea55e1008413dcb744d4bf016590';
+            userAddress = '0xb57be5149842f218a95da90599ba2b7a70f888e7';
+            userkey = 'a8d9edff20ef6fd7000f43ec103904bdc173ea55e1008413dcb744d4bf016590';
             if (typeof window.web3 !== "undefined") {
                 window.web3 = new Web3(window.web3.currentProvider);
             }else{
@@ -82067,6 +82080,7 @@ function($scope,Ether,web3Provider){
     $scope.get = function(){
         getFlights($scope.$root.address,function(res){
             $scope.flights = res;
+            $scope.$apply()
         })
     }
 
@@ -82175,6 +82189,7 @@ function($scope,Ether,Me,tools,web3Provider){
     $scope.getClaims = function(){
         getInfo($scope.$root.address,function(res){
             $scope.claims = res;
+            $scope.$apply()
         })
     }
 
@@ -82231,22 +82246,26 @@ function($scope,Ether,Me,tools,web3Provider){
 ionicApp
 .controller('meCtrl', ['$scope', '$state','Wallet','Me','globalFuncs',
 'Wechat','$http','Coinprice','Coinorders','Ether','web3Provider','ethUnits',
-'Coinorders','Coinordergetpayparams',
+'Coinorders','Coinordergetpayparams','$timeout',
 function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders,
-    Ether,web3Provider,ethUnits,Coinorders,Coinordergetpayparams) {
+    Ether,web3Provider,ethUnits,Coinorders,Coinordergetpayparams,$timeout) {
     $scope.$on('$ionicView.beforeEnter', function(){
         $scope.me = {};
-        Me.get().$promise.then(function(res){
-            if(!Wechat.hasAccessToken())Wechat.getAccessToken();
-            $scope.me = res;
-            $scope.getOrder();
-        },function(err){
-            console.log('me')
-            Wechat.loginWechat(function(){
-                console.log('登录成功')
-            },function(msg){
-                console.log(msg)
-            });
+        console.log('me')
+        $timeout(function(){
+            Me.get().$promise.then(function(res){
+                console.log('mesuc')
+                if(!Wechat.hasAccessToken())Wechat.getAccessToken();
+                $scope.me = res;
+                $scope.getOrder();
+            },function(err){
+                console.log('meerr')
+                Wechat.loginWechat(function(){
+                    console.log('登录成功')
+                },function(msg){
+                    console.log(msg)
+                });
+            })
         })
     });
 

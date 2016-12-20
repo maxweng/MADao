@@ -72838,7 +72838,15 @@ if(network_id=="1"){var possible_ids=["1","live","default"];for(var i=0;i<possib
 Object.keys(contract.events).forEach(function(topic){Contract.events[topic]=contract.events[topic];});return;}if((typeof name==="undefined"?"undefined":_typeof(name))=="object"){var obj=name;Object.keys(obj).forEach(function(name){var a=obj[name];Contract.link(name,a);});return;}Contract.links[name]=address;};Contract.contract_name=Contract.prototype.contract_name="MDC";Contract.generated_with=Contract.prototype.generated_with="3.2.0";// Allow people to opt-in to breaking changes now.
 Contract.next_gen=false;var properties={binary:function binary(){var binary=Contract.unlinked_binary;Object.keys(Contract.links).forEach(function(library_name){var library_address=Contract.links[library_name];var regex=new RegExp("__"+library_name+"_*","g");binary=binary.replace(regex,library_address.replace("0x",""));});return binary;}};Object.keys(properties).forEach(function(key){var getter=properties[key];var definition={};definition.enumerable=true;definition.configurable=false;definition.get=getter;Object.defineProperty(Contract,key,definition);Object.defineProperty(Contract.prototype,key,definition);});bootstrap(Contract);if(typeof module!="undefined"&&typeof module.exports!="undefined"){module.exports=Contract;}else{// There will only be one version of this contract in the browser,
 // and we can use that.
-window.MDC=Contract;}})();},{"web3":269,"web3/lib/web3/event.js":296}],3:[function(require,module,exports){'use strict';window.ethUtil=require('ethereumjs-util');ethUtil.crypto=require('crypto');ethUtil.scrypt=require('scryptsy');ethUtil.uuid=require('uuid');ethUtil.Tx=require('ethereumjs-tx');window.Web3=require('web3');window.BufferObject=require('buffer');window.MDC=require('./MDC.sol.js');window.HookedWeb3Provider=require('hooked-web3-provider');window.MBSProvider=require('./MBSProvider.js');window.ionicApp=angular.module('madaoClient',['ionic','ui.router','ngResource']).run(['Wechat','Me',function(Wechat,Me){Me.get().$promise.then(function(me){},function(err){Wechat.loginWechat(function(){console.log('登录成功');},function(msg){console.log(msg);});});}]).config(['$ionicConfigProvider',function($ionicConfigProvider){$ionicConfigProvider.navBar.alignTitle('center');$ionicConfigProvider.backButton.icon('ion-ios-arrow-back').previousTitleText(false);$ionicConfigProvider.platform.android.backButton.text('返回');$ionicConfigProvider.platform.ios.backButton.text('返回');$ionicConfigProvider.platform.android.tabs.style('standard');$ionicConfigProvider.views.transition('android');$ionicConfigProvider.platform.android.tabs.position('bottom');}]).config(['$compileProvider',function($compileProvider){$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|blob|mailto|file):/);}]).config(['$stateProvider','$urlRouterProvider','$httpProvider',function($stateProvider,$urlRouterProvider,$httpProvider){$httpProvider.interceptors.push('httpInterceptor');$stateProvider.state('app',{url:'/app',templateUrl:'templates/app.html',abstract:true}).state('app.start',{url:'/start',views:{menuContent:{templateUrl:'templates/start.html'}}}).state('app.tabs',{url:'/tabs',views:{menuContent:{templateUrl:'templates/tabs.html'}},abstract:true}).state('app.tabs.me',{url:'/me',views:{tabContent:{templateUrl:'templates/me.html',controller:'meCtrl'}}}).state('app.tabs.addFlight',{url:'/addFlight',views:{tabContent:{templateUrl:'templates/addFlight.html',controller:'addFlightCtrl'}}}).state('app.tabs.claims',{url:'/claims',views:{tabContent:{templateUrl:'templates/claims.html',controller:'claimsCtrl'}}}).state('app.tabs.product',{url:'/product',views:{tabContent:{templateUrl:'templates/product.html',controller:'productCtrl'}}}).state('app.provision',{url:'/provision',views:{menuContent:{templateUrl:'templates/provision.html'}}}).state('app.productDetail',{url:'/productDetail',views:{menuContent:{templateUrl:'templates/productDetail.html',controller:'productDetailCtrl'}}}).state('app.test',{url:'/test',views:{menuContent:{templateUrl:'templates/test.html',controller:'testCtrl'}}});$urlRouterProvider.otherwise('/app/tabs/me');}]);},{"./MBSProvider.js":1,"./MDC.sol.js":2,"buffer":53,"crypto":63,"ethereumjs-tx":127,"ethereumjs-util":128,"hooked-web3-provider":137,"scryptsy":217,"uuid":267,"web3":269}],4:[function(require,module,exports){var asn1=exports;asn1.bignum=require('bn.js');asn1.define=require('./asn1/api').define;asn1.base=require('./asn1/base');asn1.constants=require('./asn1/constants');asn1.decoders=require('./asn1/decoders');asn1.encoders=require('./asn1/encoders');},{"./asn1/api":5,"./asn1/base":7,"./asn1/constants":11,"./asn1/decoders":13,"./asn1/encoders":16,"bn.js":22}],5:[function(require,module,exports){var asn1=require('../asn1');var inherits=require('inherits');var api=exports;api.define=function define(name,body){return new Entity(name,body);};function Entity(name,body){this.name=name;this.body=body;this.decoders={};this.encoders={};};Entity.prototype._createNamed=function createNamed(base){var named;try{named=require('vm').runInThisContext('(function '+this.name+'(entity) {\n'+'  this._initNamed(entity);\n'+'})');}catch(e){named=function named(entity){this._initNamed(entity);};}inherits(named,base);named.prototype._initNamed=function initnamed(entity){base.call(this,entity);};return new named(this);};Entity.prototype._getDecoder=function _getDecoder(enc){enc=enc||'der';// Lazily create decoder
+window.MDC=Contract;}})();},{"web3":269,"web3/lib/web3/event.js":296}],3:[function(require,module,exports){'use strict';window.ethUtil=require('ethereumjs-util');ethUtil.crypto=require('crypto');ethUtil.scrypt=require('scryptsy');ethUtil.uuid=require('uuid');ethUtil.Tx=require('ethereumjs-tx');window.Web3=require('web3');window.BufferObject=require('buffer');window.MDC=require('./MDC.sol.js');window.HookedWeb3Provider=require('hooked-web3-provider');window.MBSProvider=require('./MBSProvider.js');window.ionicApp=angular.module('madaoClient',['ionic','ui.router','ngResource']).run(['Wechat','Me',function(Wechat,Me){Date.prototype.Format=function(fmt){//author: meizz
+var o={"M+":this.getMonth()+1,//月份   
+"d+":this.getDate(),//日
+"h+":this.getHours(),//小时
+"m+":this.getMinutes(),//分
+"s+":this.getSeconds(),//秒
+"q+":Math.floor((this.getMonth()+3)/3),//季度
+"S":this.getMilliseconds()//毫秒
+};if(/(y+)/.test(fmt))fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length));for(var k in o){if(new RegExp("("+k+")").test(fmt))fmt=fmt.replace(RegExp.$1,RegExp.$1.length==1?o[k]:("00"+o[k]).substr((""+o[k]).length));}return fmt;};Me.get().$promise.then(function(me){},function(err){Wechat.loginWechat(function(){console.log('登录成功');},function(msg){console.log(msg);});});}]).config(['$ionicConfigProvider',function($ionicConfigProvider){$ionicConfigProvider.navBar.alignTitle('center');$ionicConfigProvider.backButton.icon('ion-ios-arrow-back').previousTitleText(false);$ionicConfigProvider.platform.android.backButton.text('返回');$ionicConfigProvider.platform.ios.backButton.text('返回');$ionicConfigProvider.platform.android.tabs.style('standard');$ionicConfigProvider.views.transition('android');$ionicConfigProvider.platform.android.tabs.position('bottom');}]).config(['$compileProvider',function($compileProvider){$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|blob|mailto|file):/);}]).config(['$stateProvider','$urlRouterProvider','$httpProvider',function($stateProvider,$urlRouterProvider,$httpProvider){$httpProvider.interceptors.push('httpInterceptor');$stateProvider.state('app',{url:'/app',templateUrl:'templates/app.html',abstract:true}).state('app.start',{url:'/start',views:{menuContent:{templateUrl:'templates/start.html'}}}).state('app.tabs',{url:'/tabs',views:{menuContent:{templateUrl:'templates/tabs.html'}},abstract:true}).state('app.tabs.me',{url:'/me',views:{tabContent:{templateUrl:'templates/me.html',controller:'meCtrl'}}}).state('app.tabs.addFlight',{url:'/addFlight',views:{tabContent:{templateUrl:'templates/addFlight.html',controller:'addFlightCtrl'}}}).state('app.tabs.claims',{url:'/claims',views:{tabContent:{templateUrl:'templates/claims.html',controller:'claimsCtrl'}}}).state('app.tabs.product',{url:'/product',views:{tabContent:{templateUrl:'templates/product.html',controller:'productCtrl'}}}).state('app.provision',{url:'/provision',views:{menuContent:{templateUrl:'templates/provision.html'}}}).state('app.productDetail',{url:'/productDetail',views:{menuContent:{templateUrl:'templates/productDetail.html',controller:'productDetailCtrl'}}}).state('app.test',{url:'/test',views:{menuContent:{templateUrl:'templates/test.html',controller:'testCtrl'}}});$urlRouterProvider.otherwise('/app/tabs/me');}]);},{"./MBSProvider.js":1,"./MDC.sol.js":2,"buffer":53,"crypto":63,"ethereumjs-tx":127,"ethereumjs-util":128,"hooked-web3-provider":137,"scryptsy":217,"uuid":267,"web3":269}],4:[function(require,module,exports){var asn1=exports;asn1.bignum=require('bn.js');asn1.define=require('./asn1/api').define;asn1.base=require('./asn1/base');asn1.constants=require('./asn1/constants');asn1.decoders=require('./asn1/decoders');asn1.encoders=require('./asn1/encoders');},{"./asn1/api":5,"./asn1/base":7,"./asn1/constants":11,"./asn1/decoders":13,"./asn1/encoders":16,"bn.js":22}],5:[function(require,module,exports){var asn1=require('../asn1');var inherits=require('inherits');var api=exports;api.define=function define(name,body){return new Entity(name,body);};function Entity(name,body){this.name=name;this.body=body;this.decoders={};this.encoders={};};Entity.prototype._createNamed=function createNamed(base){var named;try{named=require('vm').runInThisContext('(function '+this.name+'(entity) {\n'+'  this._initNamed(entity);\n'+'})');}catch(e){named=function named(entity){this._initNamed(entity);};}inherits(named,base);named.prototype._initNamed=function initnamed(entity){base.call(this,entity);};return new named(this);};Entity.prototype._getDecoder=function _getDecoder(enc){enc=enc||'der';// Lazily create decoder
 if(!this.decoders.hasOwnProperty(enc))this.decoders[enc]=this._createNamed(asn1.decoders[enc]);return this.decoders[enc];};Entity.prototype.decode=function decode(data,enc,options){return this._getDecoder(enc).decode(data,options);};Entity.prototype._getEncoder=function _getEncoder(enc){enc=enc||'der';// Lazily create encoder
 if(!this.encoders.hasOwnProperty(enc))this.encoders[enc]=this._createNamed(asn1.encoders[enc]);return this.encoders[enc];};Entity.prototype.encode=function encode(data,enc,/* internal */reporter){return this._getEncoder(enc).encode(data,reporter);};},{"../asn1":4,"inherits":190,"vm":268}],6:[function(require,module,exports){var inherits=require('inherits');var Reporter=require('../base').Reporter;var Buffer=require('buffer').Buffer;function DecoderBuffer(base,options){Reporter.call(this,options);if(!Buffer.isBuffer(base)){this.error('Input not Buffer');return;}this.base=base;this.offset=0;this.length=base.length;}inherits(DecoderBuffer,Reporter);exports.DecoderBuffer=DecoderBuffer;DecoderBuffer.prototype.save=function save(){return{offset:this.offset,reporter:Reporter.prototype.save.call(this)};};DecoderBuffer.prototype.restore=function restore(save){// Return skipped data
 var res=new DecoderBuffer(this.base);res.offset=save.offset;res.length=this.offset;this.offset=save.offset;Reporter.prototype.restore.call(this,save.reporter);return res;};DecoderBuffer.prototype.isEmpty=function isEmpty(){return this.offset===this.length;};DecoderBuffer.prototype.readUInt8=function readUInt8(fail){if(this.offset+1<=this.length)return this.base.readUInt8(this.offset++,true);else return this.error(fail||'DecoderBuffer overrun');};DecoderBuffer.prototype.skip=function skip(bytes,fail){if(!(this.offset+bytes<=this.length))return this.error(fail||'DecoderBuffer overrun');var res=new DecoderBuffer(this.base);// Share reporter state
@@ -81139,6 +81147,51 @@ ionicApp
 }])
 ;
 
+
+ionicApp.filter('claimStatus', [function(){
+    return function(status){
+        var name = "";
+        if(status==0){
+            name = "初始化";
+        }else if(status==6){
+            name = "审核成功";
+        }else if(status==8){
+            name = "审核失败";
+        }else{
+            name = "审核中";
+        }
+        return name;
+    }
+}])
+;
+
+ionicApp.filter('getDate', [function(){
+    return function(date){
+        return new Date(date).format("yyyy-MM-dd HH:mm");
+    }
+}])
+;
+
+
+ionicApp.filter('orderStatus', [function(){
+    return function(status){
+        var name = "";
+        if(status==0){
+            name = "初始化";
+        }else if(status==2){
+            name = "已支付";
+        }else if(status==3){
+            name = "发送中";
+        }else if(status==6){
+            name = "交易成功";
+        }else if(status==8){
+            name = "交易失败";
+        }
+        return name;
+    }
+}])
+;
+
 ionicApp.filter('staticSrc', ['urlHandle', function(urlHandle){
     return function(src, size){
         if(!src){
@@ -82004,7 +82057,7 @@ function($scope,Ether,web3Provider){
 
     $scope.get = function(){
         getFlights($scope.$root.address,function(res){
-            alert(JSON.stringify(res))
+            $scope.flights = res;
         })
     }
 
@@ -82112,7 +82165,7 @@ function($scope,Ether,Me,tools,web3Provider){
 
     $scope.getClaims = function(){
         getInfo($scope.$root.address,function(res){
-            alert(JSON.stringify(res))
+            $scope.claims = res;
         })
     }
 
@@ -82186,12 +82239,6 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
                 console.log(msg)
             });
         })
-
-        Coinprice.get().$promise.then(function(res){
-            $scope.advicedPrice = res.ethcny;
-        },function(msg){
-            alert(JSON.stringify(msg))
-        });
     });
 
     $scope.password = "";
@@ -82230,6 +82277,24 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
             $scope.encFileName =  $scope.wallet.getV3Filename();
             $scope.isDone =  true;
         }
+    }
+
+    $scope.refresh = function(){
+        $scope.page = 1;
+        $scope.getOrder();
+        window.mdc.balances($scope.walletObj.getAddressString()).then(function(res){
+            $scope.balance = ethUnits.toEther(res.toNumber(),'wei');
+        })
+        Ether.getBalance({'balance':$scope.walletObj.getAddressString(),'isClassic':true}).$promise.then(function(res){
+            $scope.wallet = res.data;
+        },function(msg){
+            alert(JSON.stringify(msg));
+        })
+        Coinprice.get().$promise.then(function(res){
+            $scope.advicedPrice = res.ethcny;
+        },function(msg){
+            alert(JSON.stringify(msg))
+        });
     }
 
     $scope.page = 1;
@@ -82288,19 +82353,24 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
     }
 
     $scope.decryptWallet = function(password) {
+        Coinprice.get().$promise.then(function(res){
+            $scope.advicedPrice = res.ethcny;
+        },function(msg){
+            alert(JSON.stringify(msg))
+        });
 		$scope.addWalletStats = "";
         try {
-            var wallet = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, password);
+            $scope.walletObj = Wallet.getWalletFromPrivKeyFile($scope.me.encrypted_wallet_key, password);
 		} catch (e) {
 			alert(e)
             return;
 		}
 
-        web3Provider.init(wallet.getAddressString(),wallet.getPrivateKeyString());
-        window.mdc.balances(wallet.getAddressString()).then(function(res){
+        web3Provider.init($scope.walletObj.getAddressString(),$scope.walletObj.getPrivateKeyString());
+        window.mdc.balances($scope.walletObj.getAddressString()).then(function(res){
             $scope.balance = ethUnits.toEther(res.toNumber(),'wei');
         })
-        Ether.getBalance({'balance':wallet.getAddressString(),'isClassic':true}).$promise.then(function(res){
+        Ether.getBalance({'balance':$scope.walletObj.getAddressString(),'isClassic':true}).$promise.then(function(res){
             $scope.wallet = res.data;
             $scope.showWalletInfo = true;
         },function(msg){

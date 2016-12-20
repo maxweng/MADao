@@ -82220,16 +82220,28 @@ function ($scope,$state, Wallet,Me,globalFuncs,Wechat,$http,Coinprice,Coinorders
 	};
 
     $scope.recharge = function(joinPrice){
-        if(!Wechat.hasAccessToken())Wechat.getAccessToken();
+        if(!Wechat.hasAccessToken()){
+            Wechat.getAccessToken();
+            return;
+        }
         Me.get().$promise.then(function(me){
             Coinorders.add({},{'coin':joinPrice}).$promise.then(function(data){
                 console.log(data)
-                Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(data1){
-                    console.log(data1)
+                Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
+                    console.log(wechatParams)
+                    var params = {
+                        'appId':wechatParams.appId,
+                        'nonceStr':wechatParams.nonceStr,
+                        'package':wechatParams.package,
+                        'paySign':wechatParams.paySign,
+                        'signType':wechatParams.signType,
+                        'timeStamp':wechatParams.timeStamp
+                    }
+                    console.log(params)
                     var onBridgeReady = function(){
                        console.log("onBridgeReady")
                        WeixinJSBridge.invoke(
-                           'getBrandWCPayRequest', data1, function(res){
+                           'getBrandWCPayRequest', params, function(res){
                                console.log("onBridgeReadyResult")
                                if(res.err_msg == "get_brand_wcpay_request:ok" ) {
                                    alert("pay succeeded");

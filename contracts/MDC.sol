@@ -11,7 +11,7 @@ contract MDC is usingOracleIt, usingUtils {
         bytes32 flightNumber;
         uint departureTime;
         uint oracleItId;
-        uint8 status; // 0: init, 2: investigating, 6: passed, 8: rejected
+        uint status; // 0: init, 2: investigating, 6: passed, 8: rejected
     }
     
     struct Flight{
@@ -43,7 +43,7 @@ contract MDC is usingOracleIt, usingUtils {
     
     mapping (uint => uint) public oracleItIdClaimId;
     
-    uint8 constant recommendationRewardRate = 10;
+    uint constant recommendationRewardRate = 10;
     
     uint constant defaultGasLimit = 1000000;
     uint constant defaultGasPrice = 20000000000;

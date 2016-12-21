@@ -10,8 +10,8 @@
             <input type="datetime-local" class="text-right" ng-model="data.departureTime">
         </label>
         <button class="button button-positive button-block" ng-click="claim()">点我理赔</button>
-        <button class="button button-positive button-block" ng-click="getClaims()">点我查看结果</button>
-        <ul class="list" ng-repeat="claim in claims">
+        <button class="button button-positive button-block" ng-click="getClaims()">查看所有理赔记录</button>
+        <ul class="list" ng-repeat="claim in claims" style="margin-bottom:10px;">
             <li class="item">
                 航班号：<div class="table-list">{{claim.flightNumber}}</div>
             </li>

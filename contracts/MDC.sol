@@ -35,7 +35,7 @@ contract MDC is usingOracleIt, usingUtils {
     uint public totalUserAddresses;
     
     uint public totalAvailableUserAddresses;
-        
+    
     mapping (uint => ClaimInfo) public claims;
     uint public totalClaims;
     

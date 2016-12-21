@@ -19,11 +19,11 @@
             <li class="item">
                 起飞时间：<div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
             </li>
-            <li class="item" ng-show="flight.claimed">
+            <li class="item text-center" ng-show="flight.claimed">
                 已申请理赔
             </li>
             <li class="item" ng-hide="flight.claimed">
-                <button class="button button-positive button-block" ng-click="claim(flight.flightNumber,flight.departureTime)">申请理赔</button>
+                <button class="button button-positive button-block button-small" ng-click="claim(flight.flightNumber,flight.departureTime)">申请理赔</button>
             </li>
         </ul>
     </ion-content>

@@ -7,7 +7,7 @@
         </label>
         <label class="item item-input">
             <span class="input-label">起飞时间</span>
-            <input type="text" class="text-right" placeholder="格式为：2016-1-1 00:00" ng-model="data.departureTime">
+            <input type="datetime-local" class="text-right" ng-model="data.departureTime">
         </label>
         <button class="button button-positive button-block" ng-click="add()">点我登记</button>
         <button class="button button-positive button-block" ng-click="get()">点我获取记录</button>

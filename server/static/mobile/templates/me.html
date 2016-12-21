@@ -19,8 +19,8 @@
             <div class="padding-top padding-bottom">钱包地址：
                 <textarea class="form-control" type="text" readonly="readonly">{{wallet.address}}</textarea>
             </div>
-            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:2}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
-            <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:2}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
+            <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:3}} ETH = {{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
+            <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:3}} ETH = {{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB</div>
             <div>订单记录</div>
             <ul class="list" ng-repeat="order in orders.docs">
                 <li class="item">

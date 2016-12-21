@@ -1,6 +1,8 @@
 <ion-view>
     <ion-nav-title>登记</ion-nav-title>
     <ion-content class="background-gray padding">
+        <ion-refresher pulling-text="下拉刷新" on-refresh="get()">
+        </ion-refresher>
         <label class="item item-input">
             <span class="input-label">航班号</span>
             <input type="text" class="text-right" placeholder="请输入" ng-model="data.flightNumber">
@@ -10,7 +12,6 @@
             <input type="datetime-local" class="text-right" ng-model="data.departureTime">
         </label>
         <button class="button button-positive button-block" ng-click="add()">点我登记</button>
-        <button class="button button-positive button-block" ng-click="get()">点我获取记录</button>
         <ul class="list" ng-repeat="flight in flights" style="margin-bottom:10px;">
             <li class="item">
                 航班号：<div class="table-list">{{flight.flightNumber}}</div>
@@ -18,11 +19,11 @@
             <li class="item">
                 起飞时间：<div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
             </li>
-            <li class="item">
-                编号：<div class="table-list">{{flight.queryNo}}</div>
+            <li class="item" ng-show="flight.claimed">
+                已申请理赔
             </li>
-            <li class="item">
-                是否申请理赔：<div class="table-list">{{flight.claimed?"是":"否"}}</div>
+            <li class="item" ng-hide="flight.claimed">
+                <button class="button button-positive button-block" ng-click="claim(flight.flightNumber,flight.departureTime)">申请理赔</button>
             </li>
         </ul>
     </ion-content>

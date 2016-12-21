@@ -21,7 +21,7 @@
             </div>
             <div class="padding-top padding-bottom">钱包余额：{{wallet.balance | weiToETH | number:2}} ETH ({{wallet.balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB) </div>
             <div class="padding-top padding-bottom">互助计划余额：{{balance | weiToETH | number:2}} ETH ({{balance | weiToRMB:advicedPrice | currency:'￥':2}} RMB) </div>
-            <div>订单记录</div>
+            <div style="height:30px;">充值记录</div>
             <ul class="list" ng-repeat="order in orders.docs">
                 <li class="item">
                     地址：<div class="table-list">{{order.address}}</div>
@@ -43,7 +43,7 @@
               <a class="button" ng-click="preOrder()">上一页</a>
               <a class="button" ng-click="nextOrder()">下一页</a>
             </div>
-            <div>充值</div>
+            <div style="height:30px;">充值</div>
             <label class="item item-input">
                 <input type="number" placeholder="ETH个数" ng-model="eth">
             </label>

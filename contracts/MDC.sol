@@ -30,6 +30,7 @@ contract MDC is usingOracleIt, usingUtils {
     
     mapping (address => UserInfo) public infoHashes;
     mapping (address => Flight[]) public flights;
+    mapping (address => mapping (bytes32 => mapping (uint => uint))) public flightIds;
     
     mapping (uint => address) public userAddresses;
     uint public totalUserAddresses;
@@ -39,7 +40,7 @@ contract MDC is usingOracleIt, usingUtils {
     mapping (uint => ClaimInfo) public claims;
     uint public totalClaims;
     
-    mapping (bytes32 => uint[]) public idClaimIds;
+    mapping (address => mapping (uint => uint)) public claimIds;
     
     mapping (uint => uint) public oracleItIdClaimId;
     
@@ -102,22 +103,20 @@ contract MDC is usingOracleIt, usingUtils {
     }
     
     function addFlight(bytes32 _flightNumber, uint _departureTime) userAvailable {
+        _departureTime = _departureTime / 86400 * 86400;
+        
         if(now > _departureTime) throw;
 
-        uint length = flights[msg.sender].length;
-        bool hasFlight = false;
-        for(uint i=0; i<length; i++){
-            var flight = flights[msg.sender][i];
-            if(flight.flightNumber == _flightNumber && flight.departureTime >= _departureTime - 7200 && flight.departureTime <= _departureTime + 7200){
-                throw;
-            }
-        }
+        if(flightIds[msg.sender][_flightNumber][_departureTime] > 0) throw;
+
         flights[msg.sender].push(Flight({
             flightNumber: _flightNumber,
             departureTime: _departureTime,
             queryNo: strConcat(bytes32ToString(_flightNumber), " ", bytes32ToString(uintToBytes(_departureTime))),
             claimed: false
         }));
+        
+        flightIds[msg.sender][_flightNumber][_departureTime] = flights[msg.sender].length;
     }
     
     function getFlightCount(address userAddress) returns (uint count) {
@@ -132,37 +131,20 @@ contract MDC is usingOracleIt, usingUtils {
         oracleItId = oracleItQuery("AirCrash", strConcat(queryNo, " ", bytes32ToString(_name), " ", bytes32ToString(_id)), defaultGasLimit, defaultGasPrice);
     }
     
-    function claim(bytes32 _flightNumber, uint _departureTime, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) userAvailable {
+    function claim(uint _flightId, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) userAvailable {
         if(infoHashes[msg.sender].hash != sha3(_name, _country, _id, _noncestr)) throw;
         
-        uint i;
-        uint length;
-        
-        length = idClaimIds[_id].length;
-        for(i=0; i<length; i++){
-            var oldClaim = claims[idClaimIds[_id][i]];
-            if(oldClaim.flightNumber == _flightNumber && oldClaim.departureTime == _departureTime && oldClaim.claimerName == _name && oldClaim.claimerId == _id) throw;
-        }
+        if(claimIds[msg.sender][_flightId] > 0) throw;
 
         uint claimFee = getClaimFee();
         if(balances[msg.sender] < claimFee) throw;
         
-        length = flights[msg.sender].length;
-        bool hasFlight = false;
-        string memory queryNo;
-        for(i=0; i<length; i++){
-            var flight = flights[msg.sender][i];
-            if(flight.claimed) continue;
-            if(flight.flightNumber == _flightNumber && flight.departureTime == _departureTime){
-                flight.claimed = true;
-                hasFlight = true;
-                queryNo = flight.queryNo;
-                break;
-            }
-        }
-        if(!hasFlight) throw;
+        if(flights[msg.sender].length < _flightId) throw;
+        Flight flight = flights[msg.sender][_flightId];
+        if(flight.claimed) throw;
+        flight.claimed = true;
         
-        uint oracleItId = claimQuery(queryNo, _name, _id);
+        uint oracleItId = claimQuery(flight.queryNo, _name, _id);
         if(oracleItId == 0) throw;
         
         totalClaims++;
@@ -174,14 +156,14 @@ contract MDC is usingOracleIt, usingUtils {
             claimerId: _id,
             claimerNoncestr: _noncestr,
             
-            flightNumber: _flightNumber,
-            departureTime: _departureTime,
+            flightNumber: flight.flightNumber,
+            departureTime: flight.departureTime,
 
             oracleItId: oracleItId,
             status: 2
         });
         
-        idClaimIds[_id].push(totalClaims);
+        claimIds[msg.sender][_flightId] = totalClaims;
         oracleItIdClaimId[oracleItId] = totalClaims;
         
         minusBalance(msg.sender, claimFee);

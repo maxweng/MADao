@@ -270,10 +270,11 @@ module.exports = function (callback) {
                 flight: {
                     flightNumber: "FN8595",
                     departureTime: parseInt(now / 1000 + 3600)
-                }
+                },
+                flightId: 1
             }
         }
-        mdc.claim(userFlight.flight.flightNumber, userFlight.flight.departureTime, userFlight.user.name, userFlight.user.country, userFlight.user.id, userFlight.user.noncestr, { from: userFlight.user.account, gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
+        mdc.claim(userFlight.flightId, userFlight.user.name, userFlight.user.country, userFlight.user.id, userFlight.user.noncestr, { from: userFlight.user.account, gas: 1000000, gasPrice: 20000000000 }).then(function (transactionId) {
             console.log('Claim transaction ID: ', '' + transactionId);
             cb();
         }).catch(function(err){
@@ -320,19 +321,21 @@ module.exports = function (callback) {
         }
         var flight1 = {
             flightNumber: "FN8591",
-            departureTime: parseInt(now / 1000 + 3600) + 1
+            departureTime: parseInt(now / 1000 + 3600 * 24 * 2) + 1
         }
         var flight2 = {
             flightNumber: "FN8592",
-            departureTime: parseInt(now / 1000 + 3600) + 2
+            departureTime: parseInt(now / 1000 + 3600 * 24 * 2) + 2
         }
         var userFlight1 = {
             user: user1,
-            flight: flight1
+            flight: flight1,
+            flightId: 1
         }
         var userFlight2 = {
             user: user1,
-            flight: flight2
+            flight: flight2,
+            flightId: 2
         }
         
         testSignUp(user1, function(){

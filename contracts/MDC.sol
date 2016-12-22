@@ -32,7 +32,7 @@ contract MDC is usingOracleIt, usingUtils {
     mapping (address => Flight[]) public flights;
     mapping (address => mapping (bytes32 => mapping (uint => uint))) public flightIds;
     
-    mapping (uint => address) public userAddresses;
+    mapping (uint => address) userAddresses;
     uint public totalUserAddresses;
     
     uint public totalAvailableUserAddresses;

@@ -184,15 +184,15 @@ module.exports = function (callback) {
     function getTotalInfo(cb) {
         if(typeof(cb) === "undefined") cb = function(){};
         getInfo(function(info){
-            getUserInfos(function(userInfos){
+//             getUserInfos(function(userInfos){
                 getClaims(function(claims){
                     cb({
                         "info": info,
-                        "userInfos": userInfos,
+//                         "userInfos": userInfos,
                         "claims": claims
                     });
                 });
-            });
+//             });
         });
     }
     

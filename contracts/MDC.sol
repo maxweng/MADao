@@ -132,6 +132,8 @@ contract MDC is usingOracleIt, usingUtils {
     }
     
     function claim(uint _flightId, bytes32 _name, bytes32 _country, bytes32 _id, bytes32 _noncestr) userAvailable {
+        if(_flightId == 0) throw;
+        
         if(infoHashes[msg.sender].hash != sha3(_name, _country, _id, _noncestr)) throw;
         
         if(claimIds[msg.sender][_flightId] > 0) throw;
@@ -140,7 +142,7 @@ contract MDC is usingOracleIt, usingUtils {
         if(balances[msg.sender] < claimFee) throw;
         
         if(flights[msg.sender].length < _flightId) throw;
-        Flight flight = flights[msg.sender][_flightId];
+        Flight flight = flights[msg.sender][_flightId - 1];
         if(flight.claimed) throw;
         flight.claimed = true;
         

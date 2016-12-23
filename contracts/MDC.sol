@@ -103,7 +103,8 @@ contract MDC is usingOracleIt, usingUtils {
     }
     
     function addFlight(bytes32 _flightNumber, uint _departureTime) userAvailable {
-        _departureTime = _departureTime / 86400 * 86400;
+//         _departureTime = _departureTime / 86400 * 86400;
+        _departureTime = _departureTime - (_departureTime % 86400);
         
         if(now > _departureTime) throw;
 

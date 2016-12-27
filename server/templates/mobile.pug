@@ -17,7 +17,7 @@ html
     |         
     title &#x822A;&#x7A7A;&#x610F;&#x5916;&#x4E92;&#x52A9;&#x8BA1;&#x5212;
     // inject:css
-    link(href='app.739e568d10287b6e9f2931eddce2f5cc.css', rel='stylesheet')
+    link(href='/static/mobile/app.739e568d10287b6e9f2931eddce2f5cc.css', rel='stylesheet')
     // endinject
     // injectCordova
   |     
@@ -26,14 +26,14 @@ html
       ion-nav-view
     |         
     script.
-      window.HOST = "/api";
-      window.STATIC_HOST = "";
+      window.HOST = "";
+      window.STATIC_HOST = "/static/mobile/";
     // inject:js
     script(src='http://res.wx.qq.com/open/js/jweixin-1.0.0.js')
     |         
     script(src=`/static/wechat/wechat_oauth_sdk.js?appkey=${WECHAT_APP_ID}&debug=false&_=0.1`)
     |         
-    script(src='app.6e8bdb7cfd28f74ded693629b522b060.js')
+    script(src='/static/mobile/app.6e8bdb7cfd28f74ded693629b522b060.js')
     // endinject
     script.
       /* inject:script */

@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("usingOracleIt error: Please call setProvider() first before calling new().");
+      throw new Error("SafeMath error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("usingOracleIt error: contract binary not set. Can't deploy new instance.");
+      throw new Error("SafeMath error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("usingOracleIt contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of usingOracleIt: " + unlinked_libraries);
+      throw new Error("SafeMath contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of SafeMath: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to usingOracleIt.at(): " + address);
+      throw new Error("Invalid address passed to SafeMath.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: usingOracleIt not deployed or address not set.");
+      throw new Error("Cannot find deployed address: SafeMath not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -325,7 +325,7 @@ var Web3 = require("web3");
   "3": {
     "abi": [],
     "unlinked_binary": "0x606060405260068060106000396000f3606060405200",
-    "updated_at": 1482401510971,
+    "updated_at": 1482401510962,
     "links": {}
   },
   "default": {
@@ -397,7 +397,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "usingOracleIt";
+  Contract.contract_name   = Contract.prototype.contract_name   = "SafeMath";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -434,6 +434,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.usingOracleIt = Contract;
+    window.SafeMath = Contract;
   }
 })();

@@ -8,7 +8,7 @@
             <a class="item text-center box-header" ng-style="claim.status | claimColor">
                {{claim.status | claimStatus}}
             </a>
-            <a class="item" style="padding-left:0;padding-right:0;border-bottom: 2px solid #ccc;border-top: 2px dashed #4FACED;">
+            <a class="item" style="padding-left:0;padding-right:0;border-bottom: 2px solid #ccc;" ng-style="claim.status | claimBorderColor">
                 <div class="row">
                     <div class="col">
                         {{language.flightNumber}}
@@ -18,8 +18,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col" style="font-size: 24px;">{{claim.flightNumber}}</div>
-                    <div class="col" style="font-size: 24px;">{{claim.departureTime*1000 | date:'yyyy/MM/dd HH:mm'}}</div>
+                    <div class="col" style="font-size: 20px;">{{claim.flightNumber}}</div>
+                    <div class="col" style="font-size: 20px;">{{claim.departureTime*1000 | date:'yyyy/MM/dd HH:mm'}}</div>
                 </div>
             </a>
             <a class="item" style="border-top: 0;">

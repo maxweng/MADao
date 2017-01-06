@@ -10,7 +10,7 @@
             </li>
             <li class="item" style="padding: 19px 16px;">
                 <div>{{language.arrivesTime}} <span style="padding-left: 124px;">{{language.arrivesTime}}</span></div>
-                <div class="table-list">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}<i class="ion ion-plane" style="color: #8CCCF2;font-size: 20px;margin: 0 15px;"></i>{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
+                <div class="table-list" style="width: 100%;">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}<i class="ion ion-plane" style="color: #8CCCF2;font-size: 20px;margin: 0 15px;"></i>{{(flight.departureTime+86400)*1000 | date:'yyyy-MM-dd HH:mm'}}</div>
             </li>
             <li class="item text-center" ng-show="flight.claimed">
                 {{flight.claimStatus | claimStatus}}

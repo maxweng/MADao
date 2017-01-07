@@ -5,11 +5,11 @@
         </ion-refresher>
         <ul class="list"  style="margin-bottom:10px;" ng-repeat="flight in flights" style="margin-bottom:10px;">
             <li class="item" style="background: rgba(174,220,247,0.45);padding: 29px 16px;font-size:24px;">
-                {{language.flightNumber}} <div class="table-list">{{flight.flightNumber}}</div>
+                {{language.flightNumber}} <div class="table-list" style="line-height:28px;">{{flight.flightNumber}}</div>
                 <i class="ion ion-plane" style="color: #8CCCF2;font-size: 40px;position: absolute;right: 20px;top: 20px;"></i>
             </li>
             <li class="item" style="padding: 19px 16px;">
-                <div style="font-size:12px;">{{language.departureTime}} </div>
+                <div style="font-size:22px;">{{language.departureTime}} </div>
                 <div class="table-list" style="width: 100%;font-size:22px;font-weight:bold;">{{flight.departureTime*1000 | date:'yyyy-MM-dd HH:mm'}}
                 </div>
             </li>

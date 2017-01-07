@@ -81133,7 +81133,7 @@ ionicApp
         'cancel': 'Cancel',
         'fund':'Fund',
         'members':'Members',
-        'sr':'Fee',
+        'sr':'Fee ¥ ',
         'join':'Join Now',
         'renewals':'Renewals',
         'balance':'Balance',
@@ -81142,7 +81142,7 @@ ionicApp
         'flight':'My Flights',
         'wallet':'My Ether Wallet',
         'productDetailTitle':'Flight Accident Mutual Aid Plan',
-        'productDetailText':'Protection of age 0-90 years of age | sudden accident comprehensive protection',
+        'productDetailText':'Protection of age 0-90 | Flight accident comprehensive protection',
         'name':'Name',
         'defaultPlaceholder':'Please enter',
         'provision':'Terms and Privacy',
@@ -81154,12 +81154,14 @@ ionicApp
         'tip6':'Please save and backup. Do not forget your private key and password. If you do not save, there is no way to recover the wallet.',
         'tip7':'Flight Accident Mutual Aid Plan',
         'tip8':'Flight Accident Mutual Aid Plan pays you, or your beneficiary a lump sum benefit (e.g., 10000 ETH) when an accident results in your death or the loss of a limb or the loss of your eyesight.',
-        'tip9':'Protection of age 0-90 years of age, sudden accident comprehensive protection',
+        'tip9':'Protection of age 0-90, flight accident comprehensive protection',
         'tip10':'Please input the password to unlock the wallet.',
+        'tip11':'Account balance too low. Do you want to make a deposit?',
+        'tip12':'Tip',
         'refresh':'Refresh',
         'close':'Close',
         'walletAddress':'Address',
-        'walletBalance':'Balance',
+        'walletBalance':'Wallet Balance',
         'walletPasswordPlaceholder':'Enter your password to view wallet information',
         'passwordPlaceholder':'Enter your password (at least 9 characters)',
         'rechargePlaceholder':'ETH amount',
@@ -81214,10 +81216,10 @@ ionicApp
         'errMsg13':'Please fill in your nationality',
         'errMsg14':'Please fill in the ID number',
         'errMsg15':'Request failed',
-        'errMsg16':'You have no wallet, or insufficient funds',
-        'errMsg17':'You have insufficient funds',
-        'errMsg18':'wrong password',
-        'tipMsg1':'In progress, it may take a few minutes',
+        'errMsg16':'Account balance is too low',
+        'errMsg17':'Account balance is too low',
+        'errMsg18':'Wrong Password',
+        'tipMsg1':'Transaction sent.',
         'tipMsg2':'The registration is successful',
         'tipMsg3':'Successful application',
         'tipMsg4':'login successful',
@@ -81258,6 +81260,8 @@ ionicApp
         'tip8':'亚洲欧洲澳洲美洲非洲中东通保',
         'tip9':'保障年龄0-90周岁，突发意外全面保障',
         'tip10':'请先解锁钱包',
+        'tip11':'余额不足，是否充值？',
+        'tip12':'提示',
         'refresh':'刷新',
         'close':'关闭',
         'walletAddress':'钱包地址',
@@ -81316,7 +81320,7 @@ ionicApp
         'errMsg13':'请填写国籍',
         'errMsg14':'请填写身份证号',
         'errMsg15':'请求失败',
-        'errMsg16':'钱包不存在或余额不足',
+        'errMsg16':'余额不足',
         'errMsg17':'余额不足请续费',
         'errMsg18':'密码错误',
         'tipMsg1':'正在处理，可能需要几分钟请稍等',
@@ -83622,6 +83626,17 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
         })
     }
 
+    var isPay = function(){
+        $ionicPopup.confirm({
+            title: $scope.$root.language.tip12,
+            template: $scope.$root.language.tip11,
+        }).then(function(str){
+            if(str){
+                bayCoin(joinPrice);
+            }
+        })
+    }
+
     $scope.join = function(){
         if(joinPrice<0){
             alert($scope.$root.language.errMsg7);
@@ -83671,11 +83686,13 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             $ionicLoading.hide();
             if(error&&(error.message.indexOf("sender doesn't have enough funds to send tx")!=-1||
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
-                alert($scope.$root.language.errMsg16);
-                bayCoin(joinPrice);
+                // alert($scope.$root.language.errMsg16);
+                // bayCoin(joinPrice);
+                isPay();
             }else if(error&&error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
-                alert($scope.$root.language.errMsg17);
-                bayCoin(joinPrice);
+                // alert($scope.$root.language.errMsg17);
+                // bayCoin(joinPrice);
+                isPay();
             }else{
                 console.log(error)
                 alert($scope.$root.language.errMsg15);

@@ -206,13 +206,13 @@ var Web3 = require("web3");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("Migrations error: Please call setProvider() first before calling new().");
+      throw new Error("usingOracleIt error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("Migrations error: contract binary not set. Can't deploy new instance.");
+      throw new Error("usingOracleIt error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -231,7 +231,7 @@ var Web3 = require("web3");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("Migrations contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Migrations: " + unlinked_libraries);
+      throw new Error("usingOracleIt contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of usingOracleIt: " + unlinked_libraries);
     }
 
     var self = this;
@@ -272,7 +272,7 @@ var Web3 = require("web3");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to Migrations.at(): " + address);
+      throw new Error("Invalid address passed to usingOracleIt.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -283,7 +283,7 @@ var Web3 = require("web3");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: Migrations not deployed or address not set.");
+      throw new Error("Cannot find deployed address: usingOracleIt not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -323,122 +323,15 @@ var Web3 = require("web3");
 
   Contract.all_networks = {
   "3": {
-    "abi": [
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "new_address",
-            "type": "address"
-          }
-        ],
-        "name": "upgrade",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "last_completed_migration",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "completed",
-            "type": "uint256"
-          }
-        ],
-        "name": "setCompleted",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "type": "constructor"
-      }
-    ],
-    "unlinked_binary": "0x606060405260008054600160a060020a03191633179055610130806100246000396000f3606060405260e060020a60003504630900f010811461003c578063445df0ac146100c05780638da5cb5b146100c9578063fdacd576146100db575b005b61003a60043560008054600160a060020a039081163390911614156100bc57604080516001547ffdacd576000000000000000000000000000000000000000000000000000000008252600482015290518392600160a060020a0384169263fdacd5769260248281019392829003018183876161da5a03f115610002575050505b5050565b61010160015481565b610113600054600160a060020a031681565b61003a60043560005433600160a060020a03908116911614156100fe5760018190555b50565b60408051918252519081900360200190f35b60408051600160a060020a03929092168252519081900360200190f3",
-    "updated_at": 1483805909738,
-    "address": "0x57acd6b78bbab90723b6dcfd8e6963af301342c9",
+    "abi": [],
+    "unlinked_binary": "0x606060405260068060106000396000f3606060405200",
+    "updated_at": 1483805909765,
     "links": {}
   },
   "default": {
-    "abi": [
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "new_address",
-            "type": "address"
-          }
-        ],
-        "name": "upgrade",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "last_completed_migration",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "completed",
-            "type": "uint256"
-          }
-        ],
-        "name": "setCompleted",
-        "outputs": [],
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "type": "constructor"
-      }
-    ],
-    "unlinked_binary": "0x606060405260008054600160a060020a03191633179055610130806100246000396000f3606060405260e060020a60003504630900f010811461003c578063445df0ac146100c05780638da5cb5b146100c9578063fdacd576146100db575b005b61003a60043560008054600160a060020a039081163390911614156100bc57604080516001547ffdacd576000000000000000000000000000000000000000000000000000000008252600482015290518392600160a060020a0384169263fdacd5769260248281019392829003018183876161da5a03f115610002575050505b5050565b61010160015481565b610113600054600160a060020a031681565b61003a60043560005433600160a060020a03908116911614156100fe5760018190555b50565b60408051918252519081900360200190f35b60408051600160a060020a03929092168252519081900360200190f3",
-    "updated_at": 1483805436052
+    "abi": [],
+    "unlinked_binary": "0x606060405260068060106000396000f3606060405200",
+    "updated_at": 1483805436072
   }
 };
 
@@ -504,7 +397,7 @@ var Web3 = require("web3");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "Migrations";
+  Contract.contract_name   = Contract.prototype.contract_name   = "usingOracleIt";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.1.2";
 
   var properties = {
@@ -541,6 +434,6 @@ var Web3 = require("web3");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.Migrations = Contract;
+    window.usingOracleIt = Contract;
   }
 })();

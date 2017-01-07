@@ -81364,7 +81364,7 @@ ionicApp.filter('claimBorderColor', ['$rootScope',function($rootScope){
 ionicApp.filter('claimColor', ['$rootScope',function($rootScope){
     return function(status){
         if(status==6){
-            return {'background-color': '#4FACED'}
+            return {'background-color': '#00cb32'}
         }else{
             return {'background-color': '#A8A8A8'}
         }
@@ -82725,6 +82725,104 @@ function($scope,$state,Ether,web3Provider,Wallet,Wechat,Me,$ionicLoading,tools,w
 }])
 ;
 
+ionicApp.controller('claimsCtrl', ['$scope','$state','Ether','Me','tools','web3Provider','Wechat','Wallet','$ionicLoading','walletManage',
+function($scope,$state,Ether,Me,tools,web3Provider,Wechat,Wallet,$ionicLoading,walletManage){
+    $scope.$on('$ionicView.beforeEnter', function(){
+        walletManage($scope, function(modal){
+            $scope.modal = modal;
+        });
+        Me.get().$promise.then(function(me){
+            $scope.me = me;
+            if(!window.mdc)web3Provider.init($scope.me.address,'');
+            $scope.getClaims();
+        },function(err){
+            web3Provider.init("","",true);
+            $scope.getClaims();
+        })
+    });
+
+    var hexDecode = function(input){
+        var j;
+        var hexes = input.match(/.{1,4}/g) || [];
+        var back = "";
+        for(j = 0; j<hexes.length; j++) {
+            back += String.fromCharCode(parseInt(hexes[j], 16));
+        }
+
+        return back;
+    }
+
+    var safeUtf8 = function(input){
+        if(input.slice(0,2) == '0x'){
+            input = input.slice(2);
+        }
+        try{
+            return web3.toUtf8(input);
+        }catch(e){
+            return hexDecode(input);
+        }
+    }
+
+    $scope.data = {};
+    var userFlight = null;
+    var transInt = function(value){return +value};
+    var transUtf8 = function(value){return web3.toUtf8(value)};
+    var transSafeUtf8 = safeUtf8;
+    var transAscii = function(value){return web3.toAscii(value)};
+    var transString = function(value){return "" + value};
+    var transEther = function(value){return +web3.fromWei(value, "ether")};
+    var transBool = function(value){return !!value};
+
+    var getInfo = function(address,cb){
+        var claims = [];
+        window.mdc.totalClaims.call(address).then(function (totalClaims) {
+            totalClaims = +totalClaims;
+            var work = function(i, work_cb){
+                if(i > totalClaims){
+                    return work_cb();
+                }
+                window.mdc.claims.call(i).then(function (res) {
+                    claims.push({
+                        "_id": i,
+                        "claimer": transString(res[0]),
+                        "claimerName": transSafeUtf8(res[1]),
+                        "claimerCountry": transSafeUtf8(res[2]),
+                        "claimerId": transAscii(res[3]),
+                        "claimerNoncestr": transAscii(res[4]),
+                        "flightNumber": transUtf8(res[5]),
+                        "departureTime": transInt(res[6]),
+                        "oracleItId": transInt(res[7]),
+                        "status": transInt(res[8]),
+                    });
+                    i++;
+                    work(i, work_cb);
+                }).catch(function(err){
+                    console.log(err);
+                });
+            }
+            work(1, function(){
+                console.log("MDC claims: ", claims);
+                cb(claims);
+            });
+        }).catch(function(err){
+            console.log(err)
+            $ionicLoading.hide();
+        })
+    }
+
+    $scope.getClaims = function(){
+        $ionicLoading.show()
+        getInfo($scope.$root.address,function(res){
+            $scope.claims = res.reverse();
+            // if($scope.claims.length == 0)alert("暂无记录")
+            $ionicLoading.hide();
+            $scope.$broadcast('scroll.refreshComplete');
+            $scope.$apply()
+        })
+    }
+}])
+;
+
 'use strict';
 ionicApp
 .controller('meCtrl', ['$scope', '$state','Wallet','Me','globalFuncs',
@@ -83470,7 +83568,7 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
             return;
         }
         Me.get().$promise.then(function(me){
-            Coinorders.add({},{'coin':(buyPrice+0.2)}).$promise.then(function(data){
+            Coinorders.add({},{'coin':(joinPrice+0.2)}).$promise.then(function(data){
                 console.log(data)
                 Coinordergetpayparams.add({'access_token':WXOauth.oauthData.access_token,'openid':WXOauth.oauthData.openid,'out_trade_no':data.out_trade_no},{}).$promise.then(function(wechatParams){
                     console.log(wechatParams)
@@ -83544,6 +83642,18 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
         $scope.data.noncestr = tools.noncestr($scope.$root.address);
         window.mdc.signUp($scope.data.recommender || "", $scope.data.name, $scope.data.country, id, $scope.data.noncestr, { from: $scope.$root.address, value: ethUnits.toWei(joinPrice,"ether"),'gasLimit':1000000,'gasPrice':20000000000}).then(function (transactionId) {
             console.log('Sign up transaction ID: ', '' + transactionId);
+            Me.get().$promise.then(function(res){
+                res.real_name = $scope.data.name;
+                res.country = $scope.data.country;
+                res.id_no = $scope.data.id;
+                Me.update(res).$promise.then(function(res){
+                    $scope.me = res;
+                },function(msg){
+                    alert(JSON.stringify(msg))
+                })
+            },function(err){
+
+            })
             Ether.getTransaction({'txId':transactionId,'isClassic':true}).$promise.then(function(res){
                 $ionicLoading.hide();
                 if(!res.data.transactionIndex&&res.data.transactionIndex!=0){
@@ -83563,7 +83673,7 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
         error.message.indexOf("Account does not exist or account balance too low")!=-1)){
                 alert($scope.$root.language.errMsg16);
                 bayCoin(joinPrice);
-            }else if(error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
+            }else if(error&&error.message.indexOf("Insufficient funds for gas * price + value")!=-1){
                 alert($scope.$root.language.errMsg17);
                 bayCoin(joinPrice);
             }else{
@@ -83571,117 +83681,6 @@ function($scope,$state,Coinprice,tools,Me,Ether,web3Provider,ethFuncs,ethUnits,
                 alert($scope.$root.language.errMsg15);
             }
         });
-
-        Me.get().$promise.then(function(res){
-            res.real_name = $scope.data.name;
-            res.country = $scope.data.country;
-            res.id_no = $scope.data.id;
-            Me.update(res).$promise.then(function(res){
-                $scope.me = res;
-            },function(msg){
-                alert(JSON.stringify(msg))
-            })
-        },function(err){
-
-        })
-    }
-}])
-;
-
-ionicApp.controller('claimsCtrl', ['$scope','$state','Ether','Me','tools','web3Provider','Wechat','Wallet','$ionicLoading','walletManage',
-function($scope,$state,Ether,Me,tools,web3Provider,Wechat,Wallet,$ionicLoading,walletManage){
-    $scope.$on('$ionicView.beforeEnter', function(){
-        walletManage($scope, function(modal){
-            $scope.modal = modal;
-        });
-        Me.get().$promise.then(function(me){
-            $scope.me = me;
-            if(!window.mdc)web3Provider.init($scope.me.address,'');
-            $scope.getClaims();
-        },function(err){
-            web3Provider.init("","",true);
-            $scope.getClaims();
-        })
-    });
-
-    var hexDecode = function(input){
-        var j;
-        var hexes = input.match(/.{1,4}/g) || [];
-        var back = "";
-        for(j = 0; j<hexes.length; j++) {
-            back += String.fromCharCode(parseInt(hexes[j], 16));
-        }
-
-        return back;
-    }
-
-    var safeUtf8 = function(input){
-        if(input.slice(0,2) == '0x'){
-            input = input.slice(2);
-        }
-        try{
-            return web3.toUtf8(input);
-        }catch(e){
-            return hexDecode(input);
-        }
-    }
-
-    $scope.data = {};
-    var userFlight = null;
-    var transInt = function(value){return +value};
-    var transUtf8 = function(value){return web3.toUtf8(value)};
-    var transSafeUtf8 = safeUtf8;
-    var transAscii = function(value){return web3.toAscii(value)};
-    var transString = function(value){return "" + value};
-    var transEther = function(value){return +web3.fromWei(value, "ether")};
-    var transBool = function(value){return !!value};
-
-    var getInfo = function(address,cb){
-        var claims = [];
-        window.mdc.totalClaims.call(address).then(function (totalClaims) {
-            totalClaims = +totalClaims;
-            var work = function(i, work_cb){
-                if(i > totalClaims){
-                    return work_cb();
-                }
-                window.mdc.claims.call(i).then(function (res) {
-                    claims.push({
-                        "_id": i,
-                        "claimer": transString(res[0]),
-                        "claimerName": transSafeUtf8(res[1]),
-                        "claimerCountry": transSafeUtf8(res[2]),
-                        "claimerId": transAscii(res[3]),
-                        "claimerNoncestr": transAscii(res[4]),
-                        "flightNumber": transUtf8(res[5]),
-                        "departureTime": transInt(res[6]),
-                        "oracleItId": transInt(res[7]),
-                        "status": transInt(res[8]),
-                    });
-                    i++;
-                    work(i, work_cb);
-                }).catch(function(err){
-                    console.log(err);
-                });
-            }
-            work(1, function(){
-                console.log("MDC claims: ", claims);
-                cb(claims);
-            });
-        }).catch(function(err){
-            console.log(err)
-            $ionicLoading.hide();
-        })
-    }
-
-    $scope.getClaims = function(){
-        $ionicLoading.show()
-        getInfo($scope.$root.address,function(res){
-            $scope.claims = res.reverse();
-            // if($scope.claims.length == 0)alert("暂无记录")
-            $ionicLoading.hide();
-            $scope.$broadcast('scroll.refreshComplete');
-            $scope.$apply()
-        })
     }
 }])
 ;
